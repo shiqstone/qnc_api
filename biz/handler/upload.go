@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
@@ -15,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 )
 
@@ -61,7 +61,7 @@ func Upload(ctx context.Context, c *app.RequestContext) {
 	defer f.Close()
 	img, _, err := image.Decode(f)
 	if err != nil {
-		fmt.Println("err = ", err)
+		hlog.Errorf("err = ", err)
 		return
 	}
 
@@ -83,7 +83,8 @@ func Upload(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	res := process_image(base64Content, width, height, coordinates)
+	hlog.CtxInfof(ctx, "Update request, clientIP: "+c.ClientIP())
+	res := processImage(base64Content, width, height, coordinates)
 	if res != nil && res["image"] != nil {
 		c.JSON(http.StatusOK, utils.H{
 			"msg":             "success",
@@ -97,7 +98,7 @@ func Upload(ctx context.Context, c *app.RequestContext) {
 	}
 }
 
-func process_image(inputImgStr string, w, h int, cords []Coordinate) map[string]interface{} {
+func processImage(inputImgStr string, w, h int, cords []Coordinate) map[string]interface{} {
 
 	var pos [][]int
 	if cords != nil {
@@ -117,7 +118,7 @@ func process_image(inputImgStr string, w, h int, cords []Coordinate) map[string]
 		res["image"] = nil
 		return res
 	}
-	maskStr = expand_mask(inputImgStr, maskStr, 15)
+	maskStr = expandMask(inputImgStr, maskStr, 15)
 	if maskStr == "" {
 		res["msg"] = "No available mask, Click on the image to add annotations"
 		res["image"] = nil
@@ -154,6 +155,8 @@ func detectMask(imgStr string, w, h int, pos [][]int) string {
 		panic(err)
 	}
 
+	hlog.Infof("detect mask request. ")
+
 	sdURL := "http://127.0.0.1:7860"
 	response, err := http.Post(sdURL+"/sam/sam-predict", "application/json", bytes.NewBuffer(payloadBytes))
 	if err != nil {
@@ -167,7 +170,7 @@ func detectMask(imgStr string, w, h int, pos [][]int) string {
 		panic(err)
 	}
 
-	fmt.Println(reply["msg"])
+	hlog.Infof("detect mask done: ", reply["msg"])
 	// fmt.Println(reply["masks"])
 
 	if masks, ok := reply["masks"]; ok {
@@ -180,7 +183,7 @@ func detectMask(imgStr string, w, h int, pos [][]int) string {
 	return ""
 }
 
-func expand_mask(imgStr, maskStr string, dilateAmount int) string {
+func expandMask(imgStr, maskStr string, dilateAmount int) string {
 	if dilateAmount == 0 {
 		dilateAmount = 10
 	}
@@ -195,6 +198,7 @@ func expand_mask(imgStr, maskStr string, dilateAmount int) string {
 		panic(err)
 	}
 
+	hlog.Infof("expand mask request. ")
 	sdURL := "http://127.0.0.1:7860"
 	response, err := http.Post(sdURL+"/sam/dilate-mask", "application/json", bytes.NewBuffer(payloadBytes))
 	if err != nil {
@@ -208,7 +212,7 @@ func expand_mask(imgStr, maskStr string, dilateAmount int) string {
 		panic(err)
 	}
 
-	fmt.Println("expand mask done")
+	hlog.Infof("expand mask done.")
 	if mask, ok := reply["mask"]; ok {
 		return mask.(string)
 	}
@@ -220,6 +224,7 @@ func inpainting(imgStr, maskStr string) string {
 	// model_id = "sd-v1-5-inpainting.ckpt [c6bbc15e32]"
 	modelId := "realisticVisionV60B1_v60B1InpaintingVAE.safetensors [346e4b5a73]"
 	samplerName := "DPM++ 2M Karras"
+
 	prompt := "dress"
 	negativePrompt := "deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, out of focus, long neck, long body, monochrome, feet out of view, head out of view, lowers, ((bad anatomy)), bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, jpeg artifacts, signature, watermark, username, blurry, artist name, extra limb, poorly drawn eyes, (out of frame), black and white, obese, censored, bad legs, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, (extra legs), (poorly drawn eyes), without hands, bad knees, multiple shoulders, bad neck, ((no head))"
 
@@ -251,9 +256,12 @@ func inpainting(imgStr, maskStr string) string {
 		panic(err)
 	}
 
+	hlog.Infof("inpaint img2img request. ")
+
 	sdURL := "http://127.0.0.1:7860"
 	response, err := http.Post(sdURL+"/sdapi/v1/img2img", "application/json", bytes.NewBuffer(payloadBytes))
 	if err != nil {
+		hlog.Errorf("request img2img err: ", err)
 		panic(err)
 	}
 	defer response.Body.Close()
@@ -263,6 +271,7 @@ func inpainting(imgStr, maskStr string) string {
 	if err != nil {
 		panic(err)
 	}
+	hlog.Infof("inpaint img2img done. ")
 	// fmt.Println(reply["info"])
 
 	if images, ok := reply["images"]; ok {
