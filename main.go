@@ -3,6 +3,8 @@
 package main
 
 import (
+	"qnc/biz/dal"
+	"qnc/biz/mw/jwt"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -10,7 +12,14 @@ import (
 	"github.com/hertz-contrib/cors"
 )
 
+func Init() {
+	dal.Init()
+	jwt.Init()
+}
+
 func main() {
+	Init()
+
 	// h := server.Default()
 	h := server.Default(
 		server.WithHostPorts("127.0.0.1:8899"),
