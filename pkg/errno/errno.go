@@ -13,11 +13,14 @@ const (
 
 	UserAlreadyExistErrCode
 	UserIsNotExistErrCode
+	BalanceNotEnoughErrCode
 
 	RecordAlreadyExistErrCode
 	RecordNotExistErrCode
 
+	TransactionDoneErrCode
 	AmountNotMatchErrCode
+	PayIdNotMatchErrCode
 )
 
 const (
@@ -26,12 +29,6 @@ const (
 	ParamErrMsg              = "Wrong Parameter has been given"
 	UserIsNotExistErrMsg     = "user is not exist"
 	PasswordIsNotVerifiedMsg = "username or password not verified"
-	FavoriteActionErrMsg     = "favorite add failed"
-
-	MessageAddFailedErrMsg    = "message add failed"
-	FriendListNoPermissionMsg = "You can't query his friend list"
-	VideoIsNotExistErrMsg     = "video is not exist"
-	CommentIsNotExistErrMsg   = "comment is not exist"
 )
 
 type ErrNo struct {
@@ -60,9 +57,12 @@ var (
 	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
 	UserIsNotExistErr      = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
 	PasswordIsNotVerified  = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
+	BalanceNotEnoughErr    = NewErrNo(BalanceNotEnoughErrCode, "User balance not enough")
 	RecordNotExistErr      = NewErrNo(RecordNotExistErrCode, "Record does not exist")
 
-	AmountNotMatchErr = NewErrNo(AmountNotMatchErrCode, "Transaction amount does not match")
+	TransactionDoneErr = NewErrNo(TransactionDoneErrCode, "Transaction already done")
+	AmountNotMatchErr  = NewErrNo(AmountNotMatchErrCode, "Transaction amount does not match")
+	PayIdNotMatchErr   = NewErrNo(PayIdNotMatchErrCode, "Transaction pay_id does not match")
 )
 
 // ConvertErr convert error to Errno

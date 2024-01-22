@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package user;
+
+import "api.proto";
+
+option go_package = "user";
+
+message AccountTopupRequest {
+  string userid = 1; 
+  string paytype = 2;
+  string amount = 3;
+}
+
+message AccountTopupResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+  int64 uid = 3; // user id
+  double balance = 4; // user balance
+}
+
+
+service AccountHandler {
+
+  rpc AccountTopup(AccountTopupRequest) returns(AccountTopupResponse) {
+    option (api.post) = "//account/topup/";
+    // After successful creation, return the user id and permission token.
+  }
+
+}
+
