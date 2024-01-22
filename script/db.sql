@@ -51,7 +51,7 @@ CREATE TABLE `quc_deposit` (
       `amount` bigint(20) NOT NULL DEFAULT '0' COMMENT '充值金额',
       `currency` varchar(16) DEFAULT '' COMMENT '币种',
       `pay_mode` varchar(20) NOT NULL DEFAULT '' COMMENT '充值方式',
-      `pay_bank` varchar(20) NOT NULL DEFAULT '' COMMENT '充值金额',
+      `pay_bank` varchar(20) NOT NULL DEFAULT '' COMMENT '充值机构',
       `ip` varchar(32) DEFAULT NULL COMMENT '请求ip',
       `bank_trade_no` varchar(64) DEFAULT NULL COMMENT '渠道单号',
       `pay_channel` int(11) NOT NULL DEFAULT '0' COMMENT '充值渠道',

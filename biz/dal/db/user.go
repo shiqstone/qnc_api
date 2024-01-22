@@ -76,3 +76,23 @@ func CheckUserExistById(uid int64) (bool, error) {
 	}
 	return true, nil
 }
+
+func QueryBalanceById(uid int64) (*User, error) {
+	var user User
+	if err := DB.Select("coin").Where("id = ?", uid).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	if user == (User{}) {
+		err := errno.UserIsNotExistErr
+		return nil, err
+	}
+	return &user, nil
+}
+
+func UpdateUser(user *User) (*User, error) {
+	err := DB.Updates(user).Error
+	if err != nil {
+		return nil, err
+	}
+	return user, err
+}

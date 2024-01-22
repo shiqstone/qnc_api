@@ -14,18 +14,10 @@ const (
 	UserAlreadyExistErrCode
 	UserIsNotExistErrCode
 
-	FollowRelationAlreadyExistErrCode
-	FollowRelationNotExistErrCode
+	RecordAlreadyExistErrCode
+	RecordNotExistErrCode
 
-	FavoriteRelationAlreadyExistErrCode
-	FavoriteRelationNotExistErrCode
-	FavoriteActionErrCode
-
-	MessageAddFailedErrCode
-	FriendListNoPermissionErrCode
-
-	VideoIsNotExistErrCode
-	CommentIsNotExistErrCode
+	AmountNotMatchErrCode
 )
 
 const (
@@ -61,23 +53,16 @@ func (e ErrNo) WithMessage(msg string) ErrNo {
 }
 
 var (
-	Success                         = NewErrNo(SuccessCode, SuccessMsg)
-	ServiceErr                      = NewErrNo(ServiceErrCode, ServerErrMsg)
-	ParamErr                        = NewErrNo(ParamErrCode, ParamErrMsg)
-	UserAlreadyExistErr             = NewErrNo(UserAlreadyExistErrCode, "User already exists")
-	AuthorizationFailedErr          = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
-	UserIsNotExistErr               = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
-	PasswordIsNotVerified           = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
-	FollowRelationAlreadyExistErr   = NewErrNo(FollowRelationAlreadyExistErrCode, "Follow Relation already exist")
-	FollowRelationNotExistErr       = NewErrNo(FollowRelationNotExistErrCode, "Follow Relation does not exist")
-	FavoriteRelationAlreadyExistErr = NewErrNo(FavoriteRelationAlreadyExistErrCode, "Favorite Relation already exist")
-	FavoriteRelationNotExistErr     = NewErrNo(FavoriteRelationNotExistErrCode, "FavoriteRelationNotExistErr")
-	FavoriteActionErr               = NewErrNo(FavoriteActionErrCode, FavoriteActionErrMsg)
+	Success                = NewErrNo(SuccessCode, SuccessMsg)
+	ServiceErr             = NewErrNo(ServiceErrCode, ServerErrMsg)
+	ParamErr               = NewErrNo(ParamErrCode, ParamErrMsg)
+	UserAlreadyExistErr    = NewErrNo(UserAlreadyExistErrCode, "User already exists")
+	AuthorizationFailedErr = NewErrNo(AuthorizationFailedErrCode, "Authorization failed")
+	UserIsNotExistErr      = NewErrNo(UserIsNotExistErrCode, UserIsNotExistErrMsg)
+	PasswordIsNotVerified  = NewErrNo(AuthorizationFailedErrCode, PasswordIsNotVerifiedMsg)
+	RecordNotExistErr      = NewErrNo(RecordNotExistErrCode, "Record does not exist")
 
-	MessageAddFailedErr       = NewErrNo(MessageAddFailedErrCode, MessageAddFailedErrMsg)
-	FriendListNoPermissionErr = NewErrNo(FriendListNoPermissionErrCode, FriendListNoPermissionMsg)
-	VideoIsNotExistErr        = NewErrNo(VideoIsNotExistErrCode, VideoIsNotExistErrMsg)
-	CommentIsNotExistErr      = NewErrNo(CommentIsNotExistErrCode, CommentIsNotExistErrMsg)
+	AmountNotMatchErr = NewErrNo(AmountNotMatchErrCode, "Transaction amount does not match")
 )
 
 // ConvertErr convert error to Errno

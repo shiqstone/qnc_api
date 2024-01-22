@@ -57,12 +57,12 @@ func (s *UserService) UserRegister(req *user.RegisterRequest) (user_id int64, er
 
 // UserInfo the function of user api
 func (s *UserService) UserInfo(req *user.Request) (*common.User, error) {
-	query_user_id := req.UserId
-	current_user_id, exists := s.c.Get("current_user_id")
+	queryUserId := req.UserId
+	currentUserId, exists := s.c.Get("current_user_id")
 	if !exists {
-		current_user_id = 0
+		currentUserId = 0
 	}
-	return s.GetUserInfo(query_user_id, current_user_id.(int64))
+	return s.GetUserInfo(queryUserId, currentUserId.(int64))
 }
 
 // GetUserInfo
@@ -73,18 +73,19 @@ func (s *UserService) UserInfo(req *user.Request) (*common.User, error) {
 //	@param user_id int64  "Currently logged-in user id, may be 0"
 //	@return *user.User
 //	@return error
-func (s *UserService) GetUserInfo(query_user_id, user_id int64) (*common.User, error) {
+func (s *UserService) GetUserInfo(queryUserId, userId int64) (*common.User, error) {
 	u := &common.User{}
 	errChan := make(chan error, 7)
 	defer close(errChan)
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go func() {
-		dbUser, err := db.QueryUserById(query_user_id)
+		dbUser, err := db.QueryUserById(queryUserId)
 		if err != nil {
 			errChan <- err
 		} else {
 			u.Name = dbUser.UserName
+			u.Coin = dbUser.Coin
 			// u.Avatar = utils.URLconvert(s.ctx, s.c, dbUser.Avatar)
 			// u.BackgroundImage = utils.URLconvert(s.ctx, s.c, dbUser.BackgroundImage)
 			// u.Signature = dbUser.Signature
@@ -163,6 +164,6 @@ func (s *UserService) GetUserInfo(query_user_id, user_id int64) (*common.User, e
 		return &common.User{}, result
 	default:
 	}
-	u.Id = query_user_id
+	u.Id = queryUserId
 	return u, nil
 }
