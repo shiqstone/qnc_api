@@ -65,6 +65,12 @@ func (s *UserService) UserInfo(req *user.Request) (*common.User, error) {
 	return s.GetUserInfo(queryUserId, currentUserId.(int64))
 }
 
+// Check if Email Existed
+func (s *UserService) CheckUserExisted(email string) (bool, error) {
+	res, err := db.CheckUserExistByEmail(email)
+	return res, err
+}
+
 // GetUserInfo
 //
 //	@Description: Query the information of query_user_id according to the current user user_id

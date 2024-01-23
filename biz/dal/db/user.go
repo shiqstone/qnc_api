@@ -96,3 +96,15 @@ func UpdateUser(user *User) (*User, error) {
 	}
 	return user, err
 }
+
+// find if user exists
+func CheckUserExistByEmail(email string) (bool, error) {
+	var user User
+	if err := DB.Where("email = ?", email).Find(&user).Error; err != nil {
+		return false, err
+	}
+	if user == (User{}) {
+		return false, nil
+	}
+	return true, nil
+}

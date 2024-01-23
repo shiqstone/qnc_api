@@ -43,12 +43,12 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 	jwt.JwtMiddleware.LoginHandler(ctx, c)
 	token := c.GetString("token")
 	v, _ := c.Get("user_id")
-	user_id := v.(int64)
+	userId := v.(int64)
 	c.JSON(consts.StatusOK, user.RegisterResponse{
 		StatusCode: errno.SuccessCode,
 		StatusMsg:  errno.SuccessMsg,
 		Token:      token,
-		UserId:     user_id,
+		UserId:     userId,
 	})
 }
 
@@ -57,18 +57,17 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 // @router /user/login/  [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
 	v, _ := c.Get("user_id")
-	user_id := v.(int64)
+	userId := v.(int64)
 	token := c.GetString("token")
 	c.JSON(consts.StatusOK, user.LoginResponse{
 		StatusCode: errno.SuccessCode,
 		StatusMsg:  errno.SuccessMsg,
 		Token:      token,
-		UserId:     user_id,
+		UserId:     userId,
 	})
 }
 
 // User get user info
-//
 // @router /user/ [GET]
 func User(ctx context.Context, c *app.RequestContext) {
 	var err error
@@ -90,5 +89,30 @@ func User(ctx context.Context, c *app.RequestContext) {
 		StatusCode: resp.StatusCode,
 		StatusMsg:  resp.StatusMsg,
 		User:       u,
+	})
+}
+
+// User get user info
+// @router /user/identifier [POST]
+func UserIdentifier(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.IdentifierRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, user.IdentifierResponse{
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
+		})
+		return
+	}
+
+	res, err := service.NewUserService(ctx, c).CheckUserExisted(req.Email)
+
+	resp := utils.BuildBaseResp(err)
+	c.JSON(consts.StatusOK, user.IdentifierResponse{
+		StatusCode: resp.StatusCode,
+		StatusMsg:  resp.StatusMsg,
+		Exsited:    res,
 	})
 }

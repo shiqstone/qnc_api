@@ -388,6 +388,16 @@ func (x *Response) GetUser() *common.User {
 	return nil
 }
 
+type IdentifierRequest struct {
+	Email string `json:"email" form:"email" vd:"email($)"`
+}
+
+type IdentifierResponse struct {
+	StatusCode int32  `protobuf:"varint,1,opt,name=status_code,json=statusCode,proto3" query:"status_code" form:"status_code" json:"status_code"`     // 状态码，0-成功，其他值-失败
+	StatusMsg  string `protobuf:"bytes,2,opt,name=status_msg,json=statusMsg,proto3" json:"status_msg,omitempty" form:"status_msg" query:"status_msg"` // 返回状态描述
+	Exsited    bool   `json:"existed"`
+}
+
 var File_user_proto protoreflect.FileDescriptor
 
 var file_user_proto_rawDesc = []byte{
