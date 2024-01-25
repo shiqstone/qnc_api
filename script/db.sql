@@ -12,8 +12,9 @@ CREATE TABLE `qnc_user` (
   `user_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '类型 0 游客 1 普通 2 机器人',
   `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户记录';
+  PRIMARY KEY (`id`).
+  UNIQUE KEY `uidx_user_email` (`email`) USING BTREE
+) ENGINE=InnoDB  AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8mb4 COMMENT='用户记录';
 
 CREATE TABLE `qnc_user_reginfo` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -87,3 +88,18 @@ CREATE TABLE `qnc_invite_record` (
   `update_time` bigint(20) NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户邀请记录';
+
+CREATE TABLE `quc_order` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `prod_name` varchar(50) NOT NULL COMMENT '商品名',
+  `prod_id` int(11) NOT NULL COMMENT '商品id',
+  `real_cost` int(11) NOT NULL DEFAULT '0' COMMENT '实际消耗',
+  `base_cost` int(11) NOT NULL  COMMENT '标价',
+  `status` tinyint(4) NOT NULL COMMENT '状态',
+  `ip` varchar(32) DEFAULT NULL COMMENT '请求ip',
+  `create_time` bigint(20) NOT NULL COMMENT '创建时间',
+  `update_time` bigint(20) NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `inx_uid` (`uid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单记录';
