@@ -26,10 +26,6 @@ func Register(r *server.Hertz) {
 			_login.POST("/", append(_userloginMw(), user.UserLogin)...)
 		}
 		{
-			_identifier := _user.Group("/identifier", _identifierMw()...)
-			_identifier.POST("/", append(_userregisterMw(), user.UserIdentifier)...)
-		}
-		{
 			_register := _user.Group("/register", _registerMw()...)
 			_register.POST("/", append(_userregisterMw(), user.UserRegister)...)
 		}
