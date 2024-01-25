@@ -40,6 +40,7 @@ func (s *AccountService) Increase(req *user.FundsRequest) (balance float64, err 
 	rec.UpdateTime = ts
 	rec, err = db.UpdateUser(rec)
 	if err != nil {
+		hlog.Error(err)
 		return 0, err
 	}
 
@@ -70,7 +71,7 @@ func (s *AccountService) Decrease(req *user.FundsRequest) (balance float64, err 
 	}
 
 	if rec.Coin < req.Amount {
-		return rec.Coin, errno.RecordNotExistErr
+		return rec.Coin, errno.BalanceNotEnoughErr
 	}
 
 	ts := time.Now().Unix()
@@ -108,11 +109,15 @@ func (s *AccountService) CreateAccountTopup(req *user.AccountTopupRequest) (depo
 	if req.Currency == "" {
 		req.Currency = "USD"
 	}
+	cuid, exists := s.c.Get("current_user_id")
+	if !exists {
+		return "", errno.AuthorizationFailedErr
+	}
 
 	ts := time.Now().Unix()
 	// add deposit record
 	_, err = db.CreateDeposit(&db.Deposit{
-		UserId:     req.UserId,
+		UserId:     cuid.(int64),
 		DepositId:  depositId,
 		Amount:     req.Amount,
 		Status:     user.PAY_STATUS_INIT,

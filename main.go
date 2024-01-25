@@ -28,11 +28,11 @@ func main() {
 	)
 
 	h.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},              // Allowed domains, need to bring schema
-		AllowMethods:     []string{"PUT", "PATCH"},   // Allowed request methods
-		AllowHeaders:     []string{"Origin"},         // Allowed request headers
-		ExposeHeaders:    []string{"Content-Length"}, // Request headers allowed in the upload_file
-		AllowCredentials: true,                       // Whether cookies are attached
+		AllowOrigins:     []string{"*"},                       // Allowed domains, need to bring schema
+		AllowMethods:     []string{"PUT", "PATCH"},            // Allowed request methods
+		AllowHeaders:     []string{"Origin", "Authorization"}, // Allowed request headers
+		ExposeHeaders:    []string{"Content-Length"},          // Request headers allowed in the upload_file
+		AllowCredentials: true,                                // Whether cookies are attached
 		AllowOriginFunc: func(origin string) bool { // Custom domain detection with lower priority than AllowOrigins
 			return origin == "https://github.com"
 		},

@@ -23,10 +23,11 @@ var (
 
 func Init() {
 	JwtMiddleware, _ = jwt.New(&jwt.HertzJWTMiddleware{
-		Key:         []byte("tiktok secret key"),
-		TokenLookup: "query:token,form:token",
-		Timeout:     24 * time.Hour,
-		IdentityKey: identity,
+		Key:           []byte("tiktok secret key"),
+		TokenLookup:   "query:token, form:token, header:Authorization",
+		TokenHeadName: "Bearer",
+		Timeout:       24 * time.Hour,
+		IdentityKey:   identity,
 		// Verify password at login
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
 			var loginRequest user.LoginRequest
@@ -61,8 +62,8 @@ func Init() {
 		// Verify token and get the id of logged-in user
 		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
 			if v, ok := data.(float64); ok {
-				current_user_id := int64(v)
-				c.Set("current_user_id", current_user_id)
+				currentUserId := int64(v)
+				c.Set("current_user_id", currentUserId)
 				hlog.CtxInfof(ctx, "Token is verified clientIP: "+c.ClientIP())
 				return true
 			}

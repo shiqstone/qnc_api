@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package image;
+
+import "api.proto";
+
+option go_package = "image";
+
+message ImageUdRequest {
+  string userid = 1; 
+  string file = 2;
+  string pos = 3;
+}
+
+message ImageUdResponse {
+  int32 status_code = 1[(api.go_tag)='json:"status_code"'];
+  string status_msg = 2;
+  string processed_image = 3; // processed image base64
+  double balance = 4; // user balance
+}
+
+
+service Image {
+
+  rpc ImageUd(ImageUdRequest) returns(ImageUdResponse) {
+    option (api.post) = "/image/ud/";
+    // After successful creation, return the processed image base64.
+  }
+
+}
+
