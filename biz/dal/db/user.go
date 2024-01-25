@@ -39,6 +39,15 @@ func QueryUser(userName string) (*User, error) {
 	return &user, nil
 }
 
+// QueryUser query User by email
+func QueryUserByEmail(userName string) (*User, error) {
+	var user User
+	if err := DB.Where("email = ?", userName).Find(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 // QueryUserById get user in the database by user id
 func QueryUserById(uid int64) (*User, error) {
 	var user User

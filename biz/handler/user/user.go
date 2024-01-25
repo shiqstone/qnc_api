@@ -53,7 +53,6 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 }
 
 // UserLogin user login api
-//
 // @router /user/login/  [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
 	v, _ := c.Get("user_id")

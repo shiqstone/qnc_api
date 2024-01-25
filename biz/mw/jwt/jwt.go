@@ -33,7 +33,7 @@ func Init() {
 			if err := c.BindAndValidate(&loginRequest); err != nil {
 				return nil, err
 			}
-			user, err := db.QueryUser(loginRequest.Username)
+			user, err := db.QueryUserByEmail(loginRequest.Email)
 			if ok := utils.VerifyPassword(loginRequest.Password, user.Password); !ok {
 				err = errno.PasswordIsNotVerified
 				return nil, err

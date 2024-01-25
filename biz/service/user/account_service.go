@@ -35,7 +35,8 @@ func (s *AccountService) Increase(req *user.FundsRequest) (balance float64, err 
 	ts := time.Now().Unix()
 	//incre balance
 	rec.ID = req.UserId
-	rec.Coin = rec.Coin + req.Amount
+	balance = rec.Coin + req.Amount
+	rec.Coin = balance
 	rec.UpdateTime = ts
 	rec, err = db.UpdateUser(rec)
 	if err != nil {
@@ -75,7 +76,8 @@ func (s *AccountService) Decrease(req *user.FundsRequest) (balance float64, err 
 	ts := time.Now().Unix()
 	//incre balance
 	rec.ID = req.UserId
-	rec.Coin = rec.Coin - req.Amount
+	balance = rec.Coin - req.Amount
+	rec.Coin = balance
 	rec.UpdateTime = ts
 	rec, err = db.UpdateUser(rec)
 	if err != nil {

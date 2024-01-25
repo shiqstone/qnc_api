@@ -26,7 +26,7 @@ func NewUserService(ctx context.Context, c *app.RequestContext) *UserService {
 
 // UserRegister register user return user id.
 func (s *UserService) UserRegister(req *user.RegisterRequest) (user_id int64, err error) {
-	user, err := db.QueryUser(req.Username)
+	user, err := db.QueryUserByEmail(req.Email)
 	if err != nil {
 		return 0, err
 	}
@@ -41,7 +41,7 @@ func (s *UserService) UserRegister(req *user.RegisterRequest) (user_id int64, er
 
 	ts := time.Now().Unix()
 	user_id, err = db.CreateUser(&db.User{
-		UserName:   req.Username,
+		UserName:   req.Email,
 		Password:   passWord,
 		Email:      req.Email,
 		AvatarUrl:  "",

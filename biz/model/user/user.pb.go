@@ -22,8 +22,8 @@ type RegisterRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username" form:"username,required" query:"username" vd:"(len($)>5&&len($)<=32)"` // 注册用户名，最长32个字符
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password" form:"password" query:"password" vd:"(len($)>=6&&len($)<=32)"`         // 密码，最长32个字符
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username" form:"username,required" query:"username"`                     // 注册用户名，最长32个字符
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password" form:"password" query:"password" vd:"(len($)>=6&&len($)<=32)"` // 密码，最长32个字符
 	Email    string `json:"email" form:"email" vd:"email($)"`
 }
 
@@ -150,6 +150,7 @@ type LoginRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty" form:"username" query:"username"` // 登录用户名
+	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty" form:"email" query:"email"`             // 用户邮箱
 	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty" form:"password" query:"password"` // 登录密码
 }
 
