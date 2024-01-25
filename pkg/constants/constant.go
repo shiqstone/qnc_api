@@ -15,10 +15,11 @@ const (
 
 // constants in the project
 const (
-	UserTableName = "qnc_user"
-	// FollowsTableName   = "follows"
-	// VideosTableName    = "videos"
-	// MessageTableName   = "messages"
+	UserTableName       = "qnc_user"
+	CoinDetailTableName = "qnc_coin_detail"
+	DepositTableName    = "quc_deposit"
+	OrderTableName      = "quc_order"
+	KvTableName         = "quc_kv"
 	// FavoritesTableName = "likes"
 	// CommentTableName   = "comments"
 

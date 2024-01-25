@@ -69,7 +69,7 @@ const (
 )
 
 type AccountTopupRequest struct {
-	UserId   int64   `protobuf:"bytes,1,opt,name=userid,proto3" json:"userid" form:"userid" query:"userid" vd:"$>0"`
+	UserId   int64   `protobuf:"varint,1,opt,name=user_id,json=user_id,proto3" json:"user_id,omitempty" form:"user_id" query:"user_id"` // 用户id
 	Paytype  int32   `protobuf:"bytes,2,opt,name=paytype,proto3" json:"paytype" form:"paytype" query:"paytype" vd:"$ > 0"`
 	Currency string  `protobuf:"bytes,2,opt,name=currency,proto3" json:"currency" form:"currency" query:"currency"`
 	Amount   float64 `protobuf:"bytes,3,opt,name=amount,proto3" json:"amount" form:"amount" query:"amount" vd:"$ > 0"`

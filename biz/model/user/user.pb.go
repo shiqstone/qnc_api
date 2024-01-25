@@ -276,8 +276,8 @@ type Request struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId int64  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" form:"user_id" query:"user_id"` // 用户id
-	Token  string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty" form:"token" query:"token"`                      // 用户鉴权token
+	UserId int64  `protobuf:"varint,1,opt,name=user_id,json=user_id,proto3" json:"user_id,omitempty" form:"user_id" query:"user_id"` // 用户id
+	Token  string `protobuf:"bytes,2,opt,name=token,proto3" json:"token,omitempty" form:"token" query:"token"`                       // 用户鉴权token
 }
 
 func (x *Request) Reset() {
