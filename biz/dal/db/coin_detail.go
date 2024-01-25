@@ -21,7 +21,6 @@ func (CoinDetail) TableName() string {
 	return constants.CoinDetailTableName
 }
 
-// CreateUser create user info
 func CreateCoinDetail(detail *CoinDetail) (int64, error) {
 	err := DB.Create(detail).Error
 	if err != nil {

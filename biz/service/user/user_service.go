@@ -57,12 +57,13 @@ func (s *UserService) UserRegister(req *user.RegisterRequest) (user_id int64, er
 
 // UserInfo the function of user api
 func (s *UserService) UserInfo(req *user.Request) (*common.User, error) {
-	queryUserId := req.UserId
-	currentUserId, exists := s.c.Get("current_user_id")
+	// queryUserId := req.UserId
+	cuid, exists := s.c.Get("current_user_id")
 	if !exists {
-		currentUserId = 0
+		return nil, errno.AuthorizationFailedErr
 	}
-	return s.GetUserInfo(queryUserId, currentUserId.(int64))
+
+	return s.GetUserInfo(cuid.(int64))
 }
 
 // Check if Email Existed
@@ -79,7 +80,7 @@ func (s *UserService) CheckUserExisted(email string) (bool, error) {
 //	@param user_id int64  "Currently logged-in user id, may be 0"
 //	@return *user.User
 //	@return error
-func (s *UserService) GetUserInfo(queryUserId, userId int64) (*common.User, error) {
+func (s *UserService) GetUserInfo(queryUserId int64) (*common.User, error) {
 	u := &common.User{}
 	errChan := make(chan error, 7)
 	defer close(errChan)

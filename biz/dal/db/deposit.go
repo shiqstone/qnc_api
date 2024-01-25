@@ -28,7 +28,6 @@ func (Deposit) TableName() string {
 	return constants.DepositTableName
 }
 
-// CreateUser create user info
 func CreateDeposit(detail *Deposit) (int64, error) {
 	err := DB.Create(detail).Error
 	if err != nil {
@@ -42,7 +41,7 @@ func QueryByDepositId(depositId string) (*Deposit, error) {
 	if err := DB.Where("deposit_id = ?", depositId).Find(&rec).Error; err != nil {
 		return nil, err
 	}
-	if rec == (Deposit{}) {
+	if rec.DepositId != depositId {
 		err := errno.RecordNotExistErr
 		return nil, err
 	}

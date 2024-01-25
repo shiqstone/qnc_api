@@ -54,7 +54,7 @@ func QueryUserById(uid int64) (*User, error) {
 	if err := DB.Where("id = ?", uid).Find(&user).Error; err != nil {
 		return nil, err
 	}
-	if user == (User{}) {
+	if user.ID != uid {
 		err := errno.UserIsNotExistErr
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func CheckUserExistById(uid int64) (bool, error) {
 	if err := DB.Where("id = ?", uid).Find(&user).Error; err != nil {
 		return false, err
 	}
-	if user == (User{}) {
+	if user.ID != uid {
 		return false, nil
 	}
 	return true, nil
@@ -88,10 +88,10 @@ func CheckUserExistById(uid int64) (bool, error) {
 
 func QueryBalanceById(uid int64) (*User, error) {
 	var user User
-	if err := DB.Select("coin").Where("id = ?", uid).Find(&user).Error; err != nil {
+	if err := DB.Select("id", "coin").Where("id = ?", uid).Find(&user).Error; err != nil {
 		return nil, err
 	}
-	if user == (User{}) {
+	if user.ID != uid {
 		err := errno.UserIsNotExistErr
 		return nil, err
 	}
@@ -112,7 +112,8 @@ func CheckUserExistByEmail(email string) (bool, error) {
 	if err := DB.Where("email = ?", email).Find(&user).Error; err != nil {
 		return false, err
 	}
-	if user == (User{}) {
+
+	if user.Email != email {
 		return false, nil
 	}
 	return true, nil

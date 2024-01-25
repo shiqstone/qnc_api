@@ -12,7 +12,7 @@ CREATE TABLE `qnc_user` (
   `user_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '类型 0 游客 1 普通 2 机器人',
   `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
-  PRIMARY KEY (`id`).
+  PRIMARY KEY (`id`),
   UNIQUE KEY `uidx_user_email` (`email`) USING BTREE
 ) ENGINE=InnoDB  AUTO_INCREMENT=100000 DEFAULT CHARSET=utf8mb4 COMMENT='用户记录';
 
@@ -45,27 +45,27 @@ CREATE TABLE `qnc_coin_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='硬币明细表';
 
 CREATE TABLE `quc_deposit` (
-      `id` int(11) NOT NULL AUTO_INCREMENT,
-      `uid` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
-      `deposit_id` varchar(32) NOT NULL DEFAULT '' COMMENT '充值订单号',
-      `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
-      `amount` bigint(20) NOT NULL DEFAULT '0' COMMENT '充值金额',
-      `currency` varchar(16) DEFAULT '' COMMENT '币种',
-      `pay_mode` varchar(20) NOT NULL DEFAULT '' COMMENT '充值方式',
-      `pay_bank` varchar(20) NOT NULL DEFAULT '' COMMENT '充值机构',
-      `ip` varchar(32) DEFAULT NULL COMMENT '请求ip',
-      `bank_trade_no` varchar(64) DEFAULT NULL COMMENT '渠道单号',
-      `pay_channel` int(11) NOT NULL DEFAULT '0' COMMENT '充值渠道',
-      `finish_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '完成时间',
-      `total_refund` bigint(20) DEFAULT '0' COMMENT '退款金额',
-      `ext` varchar(255) DEFAULT NULL COMMENT '扩展信息',
-      `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
-      `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
-      PRIMARY KEY (`id`),
-      UNIQUE KEY `deposit_id` (`deposit_id`) USING BTREE,
-      KEY `idx_deposit_ctime` (`create_time`) USING BTREE,
-      KEY `idx_status_finish_time` (`status`,`finish_time`) USING BTREE,
-      KEY `idx_deposit_qid` (`uid`,`deposit_id`)
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `uid` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
+  `deposit_id` varchar(32) NOT NULL DEFAULT '' COMMENT '充值订单号',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
+  `amount` decimal(20,2) NOT NULL DEFAULT '0' COMMENT '充值金额',
+  `currency` varchar(16) DEFAULT '' COMMENT '币种',
+  `pay_mode` varchar(20) NOT NULL DEFAULT '' COMMENT '充值方式',
+  `pay_bank` varchar(20) NOT NULL DEFAULT '' COMMENT '充值机构',
+  `ip` varchar(32) DEFAULT NULL COMMENT '请求ip',
+  `bank_trade_no` varchar(64) DEFAULT NULL COMMENT '渠道单号',
+  `pay_channel` int(11) NOT NULL DEFAULT '0' COMMENT '充值渠道',
+  `finish_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '完成时间',
+  `total_refund` decimal(20,2) DEFAULT '0' COMMENT '退款金额',
+  `ext` varchar(255) DEFAULT NULL COMMENT '扩展信息',
+  `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `deposit_id` (`deposit_id`) USING BTREE,
+  KEY `idx_deposit_ctime` (`create_time`) USING BTREE,
+  KEY `idx_status_finish_time` (`status`,`finish_time`) USING BTREE,
+  KEY `idx_deposit_qid` (`uid`,`deposit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户充值记录记录';
 
 CREATE TABLE `qnc_kv` (
@@ -75,7 +75,8 @@ CREATE TABLE `qnc_kv` (
   `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
   `status` char(1) NOT NULL DEFAULT 'N' COMMENT '数据状态',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uidx_kv_name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `qnc_invite_record` (
@@ -94,10 +95,11 @@ CREATE TABLE `quc_order` (
   `uid` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
   `prod_name` varchar(50) NOT NULL COMMENT '商品名',
   `prod_id` int(11) NOT NULL COMMENT '商品id',
-  `real_cost` int(11) NOT NULL DEFAULT '0' COMMENT '实际消耗',
-  `base_cost` int(11) NOT NULL  COMMENT '标价',
+  `real_cost` decimal(20,2) NOT NULL DEFAULT '0' COMMENT '实际消耗',
+  `base_cost` decimal(20,2) NOT NULL  COMMENT '标价',
   `status` tinyint(4) NOT NULL COMMENT '状态',
   `ip` varchar(32) DEFAULT NULL COMMENT '请求ip',
+  `remark` varchar(512) DEFAULT NULL COMMENT '备注',
   `create_time` bigint(20) NOT NULL COMMENT '创建时间',
   `update_time` bigint(20) NOT NULL COMMENT '更新时间',
   PRIMARY KEY (`id`),
