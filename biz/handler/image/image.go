@@ -36,3 +36,27 @@ func ImageUd(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// ImageTryOn .
+// @router /image/tryon/ [POST]
+func ImageTryOn(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req image.ImageTryOnRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := service.NewImageService(ctx, c).ProcessImageTryOn(&req)
+	if err != nil {
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, image.ImageTryOnResponse{
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
+		})
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}

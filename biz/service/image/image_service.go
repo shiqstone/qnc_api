@@ -90,7 +90,8 @@ func (s *ImageService) ProcessImageUd(req *mimg.ImageUdRequest) (resp *mimg.Imag
 	}
 
 	// process image
-	msg, processedImg, seed, err := processImage(base64Content, width, height, coordinates)
+	prompt := "dress"
+	msg, processedImg, seed, err := processImage(base64Content, width, height, coordinates, prompt)
 	if err != nil {
 		hlog.Error("process image err:", err)
 		return nil, errors.New("process image failed")
@@ -166,7 +167,7 @@ func prepareParam(req *mimg.ImageUdRequest) (base64Content string, width, height
 	return
 }
 
-func processImage(inputImgStr string, w, h int, cords []Coordinate) (msg string, processedImg string, seed int64, err error) {
+func processImage(inputImgStr string, w, h int, cords []Coordinate, prompt string) (msg string, processedImg string, seed int64, err error) {
 
 	var pos [][]int
 	if cords != nil {
@@ -200,7 +201,7 @@ func processImage(inputImgStr string, w, h int, cords []Coordinate) (msg string,
 		// return res, nil
 		return msg, "", 0, nil
 	}
-	processedImg, seed, err = inpainting(inputImgStr, maskStr)
+	processedImg, seed, err = inpainting(inputImgStr, maskStr, prompt)
 	if err != nil {
 		// return nil, err
 		return "", "", 0, nil
@@ -310,12 +311,11 @@ func expandMask(imgStr, maskStr string, dilateAmount int) (string, error) {
 	return "", errors.New("expand mask failed")
 }
 
-func inpainting(imgStr, maskStr string) (string, int64, error) {
+func inpainting(imgStr, maskStr, prompt string) (string, int64, error) {
 	// model_id = "sd-v1-5-inpainting.ckpt [c6bbc15e32]"
 	modelId := "realisticVisionV60B1_v60B1InpaintingVAE.safetensors [346e4b5a73]"
 	samplerName := "DPM++ 2M Karras"
 
-	prompt := "dress"
 	negativePrompt := "deformed, bad anatomy, disfigured, poorly drawn face, mutation, mutated, extra limb, ugly, poorly drawn hands, missing limb, floating limbs, disconnected limbs, malformed hands, out of focus, long neck, long body, monochrome, feet out of view, head out of view, lowers, ((bad anatomy)), bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, jpeg artifacts, signature, watermark, username, blurry, artist name, extra limb, poorly drawn eyes, (out of frame), black and white, obese, censored, bad legs, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry, (extra legs), (poorly drawn eyes), without hands, bad knees, multiple shoulders, bad neck, ((no head))"
 
 	payload := map[string]interface{}{
@@ -381,4 +381,140 @@ func inpainting(imgStr, maskStr string) (string, int64, error) {
 		}
 	}
 	return "", seed, errors.New("impaint img2img failed")
+}
+
+func (s *ImageService) ProcessImageTryOn(req *mimg.ImageTryOnRequest) (resp *mimg.ImageTryOnResponse, err error) {
+	cuid, exists := s.c.Get("current_user_id")
+	if !exists {
+		return nil, errno.AuthorizationFailedErr
+	}
+	req.UserId = cuid.(int64)
+
+	//prepare param
+	base64Content, width, height, coordinates, prompt, err := prepareTryOnParam(req)
+	if err != nil {
+		return nil, err
+	}
+
+	//TODO get price config
+	point := 2.0
+	pname := "TryOn image"
+	var pid int64 = 1
+
+	ts := time.Now().Unix()
+	// add order record
+	orderId, err := db.CreateOrder(&db.Order{
+		UserId:     req.UserId,
+		ProdName:   pname,
+		ProdId:     pid,
+		RealCost:   point,
+		BaseCost:   point,
+		Status:     order.STATUS_INIT,
+		Ip:         s.c.ClientIP(),
+		CreateTime: ts,
+		UpdateTime: ts,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	// decrease account
+	var freq user.FundsRequest
+	freq.UserId = req.UserId
+	freq.Amount = point
+	freq.EventType = user.TYPE_PAYMENT
+	freq.OrderId = orderId
+	balance, err := service.NewAccountService(s.ctx, s.c).Decrease(&freq)
+	if err != nil {
+		return nil, err
+	}
+
+	// process image
+	msg, processedImg, seed, err := processImage(base64Content, width, height, coordinates, prompt)
+	if err != nil {
+		hlog.Error("process image err:", err)
+		return nil, errors.New("process image failed")
+	}
+	// hlog.Debug((res))
+	if processedImg != "" {
+		db.UpdateOrder(&db.Order{
+			ID:         orderId,
+			Status:     order.STATUS_SUCCESS,
+			Remark:     strconv.FormatInt(seed, 10),
+			UpdateTime: ts,
+		})
+
+		var resp = new(mimg.ImageTryOnResponse)
+		resp.ProcessedImage = processedImg
+		resp.Balance = balance
+		return resp, nil
+	} else {
+		ts := time.Now().Unix()
+		db.UpdateOrder(&db.Order{
+			ID:         orderId,
+			Status:     order.STATUS_FALID,
+			Remark:     msg,
+			UpdateTime: ts,
+		})
+		//TODO refund
+
+		return nil, errors.New(msg)
+	}
+}
+
+func prepareTryOnParam(req *mimg.ImageTryOnRequest) (base64Content string, width, height int, coordinates []Coordinate, prompt string, err error) {
+	f, err := req.FileHeader.Open()
+	if err != nil {
+		return "", 0, 0, nil, "", err
+		// panic(err)
+	}
+	defer f.Close()
+
+	// 读取文件到字节数组
+	fileRaw, err := io.ReadAll(f)
+	if err != nil {
+		return "", 0, 0, nil, "", err
+		// panic(err)
+	}
+	contentType := http.DetectContentType(fileRaw)
+
+	base64Content = base64.StdEncoding.EncodeToString(fileRaw)
+	base64Content = "data:" + contentType + ";base64," + base64Content
+
+	f, err = req.FileHeader.Open()
+	if err != nil {
+		return "", 0, 0, nil, "", err
+		// panic(err)
+	}
+	defer f.Close()
+	img, _, err := image.Decode(f)
+	if err != nil {
+		hlog.Errorf("err = ", err)
+		return "", 0, 0, nil, "", err
+	}
+
+	b := img.Bounds()
+	width = b.Max.X
+	height = b.Max.Y
+
+	// var coordinates []Coordinate
+	err = json.Unmarshal([]byte(req.Pos), &coordinates)
+	if err != nil {
+		return "", 0, 0, nil, "", err
+		// panic(err)
+	}
+
+	clothes, err := db.QueryByName("cloth")
+	if err != nil {
+		return "", 0, 0, nil, "", err
+	}
+
+	prompt = "dress"
+	for _, v := range clothes {
+		if req.Cloth == v.Value {
+			prompt = req.Cloth
+			break
+		}
+	}
+	return
 }

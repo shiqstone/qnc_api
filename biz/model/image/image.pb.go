@@ -245,3 +245,17 @@ func file_image_proto_init() {
 	file_image_proto_goTypes = nil
 	file_image_proto_depIdxs = nil
 }
+
+type ImageTryOnRequest struct {
+	UserId     int64                `form:"user_id"`
+	FileHeader multipart.FileHeader `form:"file"`
+	Pos        string               `form:"pos"`
+	Cloth      string               `form:"cloth"`
+}
+
+type ImageTryOnResponse struct {
+	StatusCode     int32   `protobuf:"varint,1,opt,name=status_code,json=statusCode,proto3" query:"status_code" form:"status_code" json:"status_code"`
+	StatusMsg      string  `protobuf:"bytes,2,opt,name=status_msg,json=statusMsg,proto3" json:"status_msg,omitempty" form:"status_msg" query:"status_msg"`
+	ProcessedImage string  `protobuf:"bytes,3,opt,name=processed_image,json=processedImage,proto3" json:"processed_image,omitempty" form:"processed_image" query:"processed_image"` // processed image base64
+	Balance        float64 `protobuf:"fixed64,4,opt,name=balance,proto3" json:"balance,omitempty" form:"balance" query:"balance"`                                                   // user balance
+}
