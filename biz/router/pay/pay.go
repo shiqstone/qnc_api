@@ -1,7 +1,7 @@
-package user
+package pay
 
 import (
-	user "qnc/biz/handler/user"
+	"qnc/biz/handler/pay"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
@@ -13,14 +13,18 @@ import (
 */
 
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
-func Topup(r *server.Hertz) {
+func Payment(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
 	{
-		_account := root.Group("/account", _accountMw()...)
+		_pay := root.Group("/pay", _payMw()...)
 		{
-			_topup := _account.Group("/topup", _topupMw()...)
-			_topup.POST("/", append(_accounttopupMw(), user.AccountTopup)...)
+			_topup := _pay.Group("/payment", _paymentMw()...)
+			_topup.POST("/", append(_payPaymentMw(), pay.Payment)...)
+		}
+		{
+			_topup := _pay.Group("/status", _paymentMw()...)
+			_topup.POST("/", append(_payPaymentMw(), pay.GetStatus)...)
 		}
 	}
 }

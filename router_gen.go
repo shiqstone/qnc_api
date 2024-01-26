@@ -11,7 +11,10 @@ func register(r *server.Hertz) {
 
 	router.GeneratedRegister(r)
 	router.GeneratedTopup(r)
+
 	router.ApiPayNotify(r)
+
+	router.GetConf(r)
 
 	customizedRegister(r)
 }

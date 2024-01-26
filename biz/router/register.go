@@ -3,6 +3,7 @@ package router
 import (
 	"qnc/biz/router/api"
 	"qnc/biz/router/image"
+	"qnc/biz/router/pay"
 
 	user "qnc/biz/router/user"
 
@@ -19,10 +20,13 @@ func GeneratedRegister(r *server.Hertz) {
 }
 
 func GeneratedTopup(r *server.Hertz) {
-	user.Topup(r)
-
+	pay.Payment(r)
 }
 
 func ApiPayNotify(r *server.Hertz) {
 	api.PayNotify(r)
+}
+
+func GetConf(r *server.Hertz) {
+	api.GetDepositConf(r)
 }

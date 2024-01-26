@@ -2,11 +2,14 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"qnc/biz/dal/db"
+	"qnc/biz/model/pay"
 	"qnc/biz/model/user"
 	"qnc/pkg/errno"
+	"strconv"
 	"strings"
 	"time"
 
@@ -103,7 +106,7 @@ func (s *AccountService) Decrease(req *user.FundsRequest) (balance float64, err 
 	return rec.Coin, nil
 }
 
-func (s *AccountService) CreateAccountTopup(req *user.AccountTopupRequest) (depositId string, err error) {
+func (s *AccountService) CreateAccountTopup(req *pay.PaymentRequest) (depositId string, err error) {
 	depositId = genId()
 
 	if req.Currency == "" {
@@ -120,7 +123,7 @@ func (s *AccountService) CreateAccountTopup(req *user.AccountTopupRequest) (depo
 		UserId:     cuid.(int64),
 		DepositId:  depositId,
 		Amount:     req.Amount,
-		Status:     user.PAY_STATUS_INIT,
+		Status:     pay.PAY_STATUS_INIT,
 		Currency:   req.Currency,
 		Ip:         req.Ip,
 		CreateTime: ts,
@@ -143,19 +146,29 @@ func genId() string {
 	return fmt.Sprintf("%s%d", ts, rt)
 }
 
-func (s *AccountService) GetPayStatus(req *user.PayStatusRequest) (resp *user.PayStatusResponse, err error) {
+func (s *AccountService) GetPayStatus(req *pay.PaymentStatusRequest) (resp *pay.PaymentStatusResponse, err error) {
 	deposit, err := db.QueryByDepositId(req.DepositId)
 	if err != nil {
 		return nil, err
 	}
+	cuid, exists := s.c.Get("current_user_id")
+	if !exists {
+		return nil, errno.AuthorizationFailedErr
+	}
+	rec, err := db.QueryBalanceById(cuid.(int64))
+	if err != nil {
+		return nil, err
+	}
 
+	resp = new(pay.PaymentStatusResponse)
 	resp.DepositId = deposit.DepositId
 	resp.Status = deposit.Status
+	resp.Balance = rec.Coin
 
 	return resp, nil
 }
 
-func (s *AccountService) UpdatePayStatus(req *user.PayStatusRequest) (err error) {
+func (s *AccountService) UpdatePayStatus(req *pay.PayStatusRequest) (err error) {
 	deposit, err := db.QueryByDepositId(req.DepositId)
 	if err != nil {
 		return err
@@ -164,16 +177,35 @@ func (s *AccountService) UpdatePayStatus(req *user.PayStatusRequest) (err error)
 	if req.Amount != deposit.Amount {
 		return errno.AmountNotMatchErr
 	}
-	if deposit.Status == user.PAY_STATUS_SUCCESS || deposit.Status == user.PAY_STATUS_FALID {
+	if deposit.Status == pay.PAY_STATUS_SUCCESS || deposit.Status == pay.PAY_STATUS_FALID {
 		return errno.TransactionDoneErr
+	}
+
+	kvs, err := db.QueryAllByName("deposit")
+	if err != nil {
+		return err
+	}
+
+	var coin float64
+	for _, v := range kvs {
+		prod := make(map[string]interface{})
+		err = json.Unmarshal([]byte(v.Value), &prod)
+		if err != nil {
+			continue
+		}
+		price := prod["price"].(string)
+		if price == strconv.FormatFloat(deposit.Amount, 'f', -1, 64) {
+			coin = prod["coin"].(float64)
+			break
+		}
 	}
 
 	ts := time.Now().Unix()
 	// update deposit record
 	if req.Result == "success" {
-		deposit.Status = user.PAY_STATUS_SUCCESS
+		deposit.Status = pay.PAY_STATUS_SUCCESS
 	} else {
-		deposit.Status = user.PAY_STATUS_FALID
+		deposit.Status = pay.PAY_STATUS_FALID
 	}
 	deposit.FinishTime = ts
 	deposit.UpdateTime = ts
@@ -189,7 +221,7 @@ func (s *AccountService) UpdatePayStatus(req *user.PayStatusRequest) (err error)
 		//increase account
 		_, err = s.Increase(&user.FundsRequest{
 			UserId:    deposit.UserId,
-			Amount:    req.Amount,
+			Amount:    coin,
 			OrderId:   deposit.ID,
 			EventType: user.TYPE_RECHARGE,
 		})

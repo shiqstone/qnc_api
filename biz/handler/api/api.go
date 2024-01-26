@@ -3,8 +3,9 @@ package api
 import (
 	"context"
 
-	user "qnc/biz/model/user"
-	service "qnc/biz/service/user"
+	"qnc/biz/model/pay"
+	kvservice "qnc/biz/service/kv"
+	uservice "qnc/biz/service/user"
 	"qnc/pkg/utils"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -12,10 +13,10 @@ import (
 )
 
 // Api .
-// @router //api/paynotify [POST]
+// @router /api/paynotify [POST]
 func Notify(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req user.PayStatusRequest
+	var req pay.PayStatusRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		c.String(consts.StatusBadRequest, err.Error())
@@ -24,18 +25,34 @@ func Notify(ctx context.Context, c *app.RequestContext) {
 
 	//TODO verify sign
 
-	err = service.NewAccountService(ctx, c).UpdatePayStatus(&req)
+	err = uservice.NewAccountService(ctx, c).UpdatePayStatus(&req)
 	if err != nil {
 		resp := utils.BuildBaseResp(err)
-		c.JSON(consts.StatusOK, user.PayStatusResponse{
+		c.JSON(consts.StatusOK, pay.PayStatusResponse{
 			StatusCode: resp.StatusCode,
 			StatusMsg:  resp.StatusMsg,
 		})
 		return
 	}
 
-	resp := new(user.PayStatusResponse)
+	resp := new(pay.PayStatusResponse)
 	resp.Result = "ok"
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// @router /api/gettopupconf [GET]
+func GetTopupConf(ctx context.Context, c *app.RequestContext) {
+	var err error
+	resp, err := kvservice.NewKvService(ctx, c).GetDepositConf()
+	if err != nil {
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, pay.PayStatusResponse{
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
+		})
+		return
+	}
 
 	c.JSON(consts.StatusOK, resp)
 }
