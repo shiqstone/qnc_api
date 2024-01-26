@@ -16,7 +16,7 @@ type Deposit struct {
 	PayBank     string  `json:"pay_bank"`
 	PayChannel  int16   `json:"pay_channel"`
 	BankTradeNo string  `json:"bank_trade_no"`
-	TotalRefund float64 `json:"total_refund"`
+	Coin        float64 `json:"coin"`
 	Ip          string  `json:"ip"`
 	Ext         string  `json:"ext"`
 	FinishTime  int64   `json:"finish_time"`

@@ -99,7 +99,7 @@ func QueryBalanceById(uid int64) (*User, error) {
 }
 
 func UpdateUser(user *User) (*User, error) {
-	err := DB.Updates(user).Error
+	err := DB.Select("coin", "update_time").Updates(user).Error
 	if err != nil {
 		return nil, err
 	}

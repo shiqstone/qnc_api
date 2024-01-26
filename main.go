@@ -23,7 +23,7 @@ func main() {
 	// h := server.Default()
 	h := server.Default(
 		server.WithHostPorts("127.0.0.1:8899"),
-		server.WithMaxRequestBodySize(20<<20),
+		server.WithMaxRequestBodySize(10<<20),
 		server.WithTransport(standard.NewTransporter),
 	)
 

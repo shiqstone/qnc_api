@@ -44,7 +44,7 @@ CREATE TABLE `qnc_coin_detail` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='硬币明细表';
 
-CREATE TABLE `quc_deposit` (
+CREATE TABLE `qnc_deposit` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `uid` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
   `deposit_id` varchar(32) NOT NULL DEFAULT '' COMMENT '充值订单号',
@@ -57,7 +57,7 @@ CREATE TABLE `quc_deposit` (
   `bank_trade_no` varchar(64) DEFAULT NULL COMMENT '渠道单号',
   `pay_channel` int(11) NOT NULL DEFAULT '0' COMMENT '充值渠道',
   `finish_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '完成时间',
-  `total_refund` decimal(20,2) DEFAULT '0' COMMENT '退款金额',
+  `coin` decimal(20,2) DEFAULT '0' COMMENT '到账硬币',
   `ext` varchar(255) DEFAULT NULL COMMENT '扩展信息',
   `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
@@ -74,7 +74,7 @@ CREATE TABLE `qnc_kv` (
   `value` text NOT NULL COMMENT '数据',
   `create_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间',
   `update_time` bigint(20) unsigned NOT NULL DEFAULT '0' COMMENT '最后修改时间',
-  `status` char(1) NOT NULL DEFAULT 'N' COMMENT '数据状态',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uidx_kv_name` (`name`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -90,7 +90,7 @@ CREATE TABLE `qnc_invite_record` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户邀请记录';
 
-CREATE TABLE `quc_order` (
+CREATE TABLE `qnc_order` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `uid` bigint(20) NOT NULL DEFAULT '0' COMMENT '用户id',
   `prod_name` varchar(50) NOT NULL COMMENT '商品名',

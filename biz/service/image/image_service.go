@@ -18,6 +18,7 @@ import (
 	"qnc/biz/model/user"
 	service "qnc/biz/service/user"
 	"qnc/pkg/errno"
+	"strconv"
 	"strings"
 	"time"
 
@@ -30,7 +31,7 @@ type ImageService struct {
 	c   *app.RequestContext
 }
 
-// NewImageService create user service
+// NewImageService create image service
 func NewImageService(ctx context.Context, c *app.RequestContext) *ImageService {
 	return &ImageService{ctx: ctx, c: c}
 }
@@ -89,21 +90,22 @@ func (s *ImageService) ProcessImageUd(req *mimg.ImageUdRequest) (resp *mimg.Imag
 	}
 
 	// process image
-	res, err := processImage(base64Content, width, height, coordinates)
+	msg, processedImg, seed, err := processImage(base64Content, width, height, coordinates)
 	if err != nil {
 		hlog.Error("process image err:", err)
 		return nil, errors.New("process image failed")
 	}
 	// hlog.Debug((res))
-	if res != nil && res["image"] != nil {
+	if processedImg != "" {
 		db.UpdateOrder(&db.Order{
 			ID:         orderId,
 			Status:     order.STATUS_SUCCESS,
+			Remark:     strconv.FormatInt(seed, 10),
 			UpdateTime: ts,
 		})
 
 		var resp = new(mimg.ImageUdResponse)
-		resp.ProcessedImage = res["image"].(string)
+		resp.ProcessedImage = processedImg
 		resp.Balance = balance
 		return resp, nil
 	} else {
@@ -111,12 +113,12 @@ func (s *ImageService) ProcessImageUd(req *mimg.ImageUdRequest) (resp *mimg.Imag
 		db.UpdateOrder(&db.Order{
 			ID:         orderId,
 			Status:     order.STATUS_FALID,
-			Remark:     res["msg"].(string),
+			Remark:     msg,
 			UpdateTime: ts,
 		})
 		//TODO refund
 
-		return nil, errors.New(res["msg"].(string))
+		return nil, errors.New(msg)
 	}
 }
 
@@ -164,7 +166,7 @@ func prepareParam(req *mimg.ImageUdRequest) (base64Content string, width, height
 	return
 }
 
-func processImage(inputImgStr string, w, h int, cords []Coordinate) (map[string]interface{}, error) {
+func processImage(inputImgStr string, w, h int, cords []Coordinate) (msg string, processedImg string, seed int64, err error) {
 
 	var pos [][]int
 	if cords != nil {
@@ -179,35 +181,44 @@ func processImage(inputImgStr string, w, h int, cords []Coordinate) (map[string]
 	// fmt.Println(inputImgStr)
 	maskStr, err := detectMask(inputImgStr, w, h, pos)
 	if err != nil {
-		return nil, err
+		return "", "", 0, err
 	}
-	var res = make(map[string]interface{})
+	// var res = make(map[string]interface{})
 	if maskStr == "" {
-		res["msg"] = "No detected available object, Click on the image to add annotations"
-		res["image"] = nil
-		return res, nil
+		msg = "No detected available object, Click on the image to add annotations"
+		// res["msg"] = "No detected available object, Click on the image to add annotations"
+		// res["image"] = nil
+		return msg, "", 0, nil
 	}
 	maskStr, err = expandMask(inputImgStr, maskStr, 15)
 	if err != nil {
-		return nil, err
+		return "", "", 0, err
 	}
 	if maskStr == "" {
-		res["msg"] = "No available mask, Click on the image to add annotations"
-		res["image"] = nil
-		return res, nil
+		msg = "No available mask, Click on the image to add annotations"
+		// res["image"] = nil
+		// return res, nil
+		return msg, "", 0, nil
 	}
-	processedImg, err := inpainting(inputImgStr, maskStr)
+	processedImg, seed, err = inpainting(inputImgStr, maskStr)
 	if err != nil {
-		return nil, err
+		// return nil, err
+		return "", "", 0, nil
 	}
 	if processedImg == "" {
-		res["msg"] = "Process image failded, try again later"
-		res["image"] = nil
-		return res, nil
+		msg = "Process image failded, try again later"
+		// res["msg"] = "Process image failded, try again later"
+		// res["image"] = nil
+		// res["seed"] = seed
+		// return res, nil
+		return msg, "", seed, nil
 	} else {
-		res["msg"] = "success"
-		res["image"] = processedImg
-		return res, nil
+		// res["msg"] = "success"
+		// res["image"] = processedImg
+		// res["seed"] = seed
+		// return res, nil
+		msg = "success"
+		return msg, processedImg, seed, nil
 	}
 }
 
@@ -299,7 +310,7 @@ func expandMask(imgStr, maskStr string, dilateAmount int) (string, error) {
 	return "", errors.New("expand mask failed")
 }
 
-func inpainting(imgStr, maskStr string) (string, error) {
+func inpainting(imgStr, maskStr string) (string, int64, error) {
 	// model_id = "sd-v1-5-inpainting.ckpt [c6bbc15e32]"
 	modelId := "realisticVisionV60B1_v60B1InpaintingVAE.safetensors [346e4b5a73]"
 	samplerName := "DPM++ 2M Karras"
@@ -333,7 +344,7 @@ func inpainting(imgStr, maskStr string) (string, error) {
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
 		// panic(err)
-		return "", err
+		return "", 0, err
 	}
 
 	hlog.Infof("inpaint img2img request. ")
@@ -343,7 +354,7 @@ func inpainting(imgStr, maskStr string) (string, error) {
 	if err != nil {
 		hlog.Errorf("request img2img err: ", err)
 		// panic(err)
-		return "", err
+		return "", 0, err
 	}
 	defer response.Body.Close()
 
@@ -351,16 +362,23 @@ func inpainting(imgStr, maskStr string) (string, error) {
 	err = json.NewDecoder(response.Body).Decode(&reply)
 	if err != nil {
 		// panic(err)
-		return "", err
+		return "", 0, err
 	}
 	hlog.Infof("inpaint img2img done. ")
-	hlog.Debug(reply["info"])
+
+	var seed int64
+	infoStr := reply["info"].(string)
+	info := make(map[string]interface{})
+	err = json.Unmarshal([]byte(infoStr), &info)
+	if err == nil {
+		seed = int64(info["seed"].(float64))
+	}
 
 	if images, ok := reply["images"]; ok {
 		for _, imgStrs := range images.([]interface{}) {
 			imgs := strings.Split(imgStrs.(string), ",")
-			return imgs[0], nil
+			return imgs[0], seed, nil
 		}
 	}
-	return "", errors.New("impaint img2img failed")
+	return "", seed, errors.New("impaint img2img failed")
 }
