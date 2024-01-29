@@ -56,20 +56,3 @@ func __2fMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
-
-func _accountMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}
-
-func _topupMw() []app.HandlerFunc {
-	// your code...
-	return []app.HandlerFunc{
-		jwt.JwtMiddleware.MiddlewareFunc(),
-	}
-}
-
-func _accounttopupMw() []app.HandlerFunc {
-	// your code...
-	return nil
-}

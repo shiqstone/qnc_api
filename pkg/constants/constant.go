@@ -17,9 +17,9 @@ const (
 const (
 	UserTableName       = "qnc_user"
 	CoinDetailTableName = "qnc_coin_detail"
-	DepositTableName    = "quc_deposit"
-	OrderTableName      = "quc_order"
-	KvTableName         = "quc_kv"
+	DepositTableName    = "qnc_deposit"
+	OrderTableName      = "qnc_order"
+	KvTableName         = "qnc_kv"
 	// FavoritesTableName = "likes"
 	// CommentTableName   = "comments"
 
