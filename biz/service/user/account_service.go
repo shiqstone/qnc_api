@@ -193,8 +193,8 @@ func (s *AccountService) UpdatePayStatus(req *pay.PayStatusRequest) (err error) 
 		if err != nil {
 			continue
 		}
-		price := prod["price"].(string)
-		if price == strconv.FormatFloat(deposit.Amount, 'f', -1, 64) {
+		price, _ := strconv.ParseFloat(prod["price"].(string), 64)
+		if price == deposit.Amount {
 			coin = prod["coin"].(float64)
 			break
 		}
