@@ -75,6 +75,7 @@ type ImageUdResponse struct {
 	StatusMsg      string  `protobuf:"bytes,2,opt,name=status_msg,json=statusMsg,proto3" json:"status_msg,omitempty" form:"status_msg" query:"status_msg"`
 	ProcessedImage string  `protobuf:"bytes,3,opt,name=processed_image,json=processedImage,proto3" json:"processed_image,omitempty" form:"processed_image" query:"processed_image"` // processed image base64
 	Balance        float64 `protobuf:"fixed64,4,opt,name=balance,proto3" json:"balance,omitempty" form:"balance" query:"balance"`                                                   // user balance
+	OrderId        int64   `json:"order_id"`
 }
 
 func (x *ImageUdResponse) Reset() {
@@ -258,4 +259,5 @@ type ImageTryOnResponse struct {
 	StatusMsg      string  `protobuf:"bytes,2,opt,name=status_msg,json=statusMsg,proto3" json:"status_msg,omitempty" form:"status_msg" query:"status_msg"`
 	ProcessedImage string  `protobuf:"bytes,3,opt,name=processed_image,json=processedImage,proto3" json:"processed_image,omitempty" form:"processed_image" query:"processed_image"` // processed image base64
 	Balance        float64 `protobuf:"fixed64,4,opt,name=balance,proto3" json:"balance,omitempty" form:"balance" query:"balance"`                                                   // user balance
+	OrderId        int64   `json:"order_id"`
 }
