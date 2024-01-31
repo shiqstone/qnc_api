@@ -21,6 +21,8 @@ const (
 	TransactionDoneErrCode
 	AmountNotMatchErrCode
 	PayIdNotMatchErrCode
+
+	SdProcessErrCode
 )
 
 const (
@@ -63,6 +65,7 @@ var (
 	TransactionDoneErr = NewErrNo(TransactionDoneErrCode, "Transaction already done")
 	AmountNotMatchErr  = NewErrNo(AmountNotMatchErrCode, "Transaction amount does not match")
 	PayIdNotMatchErr   = NewErrNo(PayIdNotMatchErrCode, "Transaction pay_id does not match")
+	SdProcessErr       = NewErrNo(SdProcessErrCode, "Sd process Failed")
 )
 
 // ConvertErr convert error to Errno
