@@ -1,0 +1,10 @@
+package errno
+
+const (
+	WS_SUCCESS = 0
+	WS_FAIL    = -1
+
+	WS_SYSTEM_ID_ERROR      = -1001
+	WS_ONLINE_MESSAGE_CODE  = 1001
+	WS_OFFLINE_MESSAGE_CODE = 1002
+)

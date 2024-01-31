@@ -5,6 +5,8 @@ package main
 import (
 	"qnc/biz/dal"
 	"qnc/biz/mw/jwt"
+	"qnc/biz/mw/queue"
+	"qnc/biz/mw/ws"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -15,6 +17,8 @@ import (
 func Init() {
 	dal.Init()
 	jwt.Init()
+	queue.Init()
+	ws.Init()
 }
 
 func main() {
