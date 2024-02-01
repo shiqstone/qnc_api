@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 	gormopentracing "gorm.io/plugin/opentracing"
 
-	"qnc/pkg/constants"
+	"qnc/biz/mw/viper"
 )
 
 var DB *gorm.DB
@@ -13,7 +13,8 @@ var DB *gorm.DB
 // Init init DB
 func Init() {
 	var err error
-	DB, err = gorm.Open(mysql.Open(constants.MySQLDefaultDSN),
+	config := viper.Conf.DB
+	DB, err = gorm.Open(mysql.Open(config.MysqlDSN),
 		&gorm.Config{
 			PrepareStmt:            true,
 			SkipDefaultTransaction: true,

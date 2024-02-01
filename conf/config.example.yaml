@@ -1,0 +1,16 @@
+App:
+  HostPorts: 127.0.0.1:8888
+  Domain: example.com
+  BaseUrl: "https://example.com"
+  AllowOrigins : "https://example.com"
+  MaxRequestBodySize: 10485760  # 10M
+
+DB:
+  MysqlDSN: root:root@tcp(127.0.0.1:3306)/qnc_db?charset=utf8&parseTime=True&loc=Local
+
+Redis:
+  Addr: "127.0.0.1:6379"
+  Password: ""
+  Db: 0
+  EncodeLockSecond: 10
+  DecodeLockSecond: 10

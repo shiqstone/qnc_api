@@ -5,18 +5,20 @@ import (
 
 	"github.com/go-redis/redis/v7"
 
-	"qnc/pkg/constants"
+	"qnc/biz/mw/viper"
 )
 
 var (
 	expireTime = time.Hour * 1
 	rdbQueue   *redis.Client
+	config     *viper.Redis
 )
 
 func InitRedis() {
+	config = viper.Conf.Redis
 	rdbQueue = redis.NewClient(&redis.Options{
-		Addr:     constants.RedisAddr,
-		Password: constants.RedisPassword,
-		DB:       0,
+		Addr:     config.Addr,
+		Password: config.Password,
+		DB:       config.Db,
 	})
 }
