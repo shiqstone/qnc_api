@@ -12,6 +12,8 @@ import (
 	mimg "qnc/biz/model/image"
 	"strings"
 
+	_ "golang.org/x/image/webp"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 )
