@@ -241,6 +241,9 @@ func PingTimer() {
 			<-ticker.C
 			//发送心跳
 			for clientId, conn := range Manager.AllClient() {
+				if conn == nil || conn.Socket == nil {
+					continue
+				}
 				if err := conn.Socket.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(time.Second)); err != nil {
 					Manager.DisConnect <- conn
 					hlog.Errorf("send heart beat failed: %s total connect：%d", clientId, Manager.Count())
