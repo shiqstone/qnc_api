@@ -1,9 +1,10 @@
 package viper
 
 type Config struct {
-	App   *App   `yaml:"App"`
-	DB    *DB    `yaml:"DB"`
-	Redis *Redis `yaml:"Redis"`
+	App       *App       `yaml:"App"`
+	DB        *DB        `yaml:"DB"`
+	Redis     *Redis     `yaml:"Redis"`
+	SdService *SdService `yaml:"SdService"`
 }
 
 type App struct {
@@ -27,4 +28,8 @@ type Redis struct {
 	DriftLockSecond    int    `yaml:"DriftLockSecond"`    // Drift lock current limit interval
 	CompressLockSecond int    `yaml:"CompressLockSecond"` // Compress lock current limit interval
 	DriftLimit         int    `yaml:"DriftLimit"`         // Limit on the number of drifting letter caches
+}
+
+type SdService struct {
+	BaseUrl string `yaml:"BaseUrl"` // Stable diffusion Service base url
 }

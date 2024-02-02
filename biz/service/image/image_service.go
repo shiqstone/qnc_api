@@ -10,6 +10,7 @@ import (
 	_ "image/png"
 	"net/http"
 	mimg "qnc/biz/model/image"
+	"qnc/biz/mw/viper"
 	"strings"
 
 	_ "golang.org/x/image/webp"
@@ -23,12 +24,17 @@ type ImageService struct {
 	c   *app.RequestContext
 }
 
+var SdBaseUrl string
+
+func Init() {
+	config := viper.Conf.SdService
+	SdBaseUrl = config.BaseUrl //"http://127.0.0.1:7860"
+}
+
 // NewImageService create image service
 func NewImageService(ctx context.Context, c *app.RequestContext) *ImageService {
 	return &ImageService{ctx: ctx, c: c}
 }
-
-var SdBaseUrl = "http://127.0.0.1:7860"
 
 func detectMask(imgStr string, w, h int, pos [][]int) (string, error) {
 	if pos == nil {

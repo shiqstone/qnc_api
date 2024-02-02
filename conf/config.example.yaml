@@ -14,3 +14,6 @@ Redis:
   Db: 0
   EncodeLockSecond: 10
   DecodeLockSecond: 10
+
+SdService:
+  BaseUrl: "http://127.0.0.1:7860"

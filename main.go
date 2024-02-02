@@ -8,6 +8,7 @@ import (
 	"qnc/biz/mw/queue"
 	"qnc/biz/mw/viper"
 	"qnc/biz/mw/ws"
+	img_service "qnc/biz/service/image"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -21,6 +22,7 @@ func Init() {
 	jwt.Init()
 	queue.Init()
 	ws.Init()
+	img_service.Init()
 }
 
 func main() {
