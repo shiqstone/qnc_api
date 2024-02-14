@@ -45,6 +45,14 @@ func StartServeWs(ctx *app.RequestContext) {
 		token, err := mvjwt.JwtMiddleware.ParseTokenString(string(message))
 		if err != nil {
 			hlog.Debug("parse token err:", err)
+			conn.WriteJSON(RetData{
+				Code:       0,
+				MessageId:  "100001",
+				SendUserId: "101",
+				MsgType:    "nologin",
+				Msg:        "token invalid",
+				Data:       nil,
+			})
 			return
 		}
 
@@ -57,6 +65,14 @@ func StartServeWs(ctx *app.RequestContext) {
 		}
 		if clientId == "" {
 			hlog.Error("no login")
+			conn.WriteJSON(RetData{
+				Code:       0,
+				MessageId:  "100001",
+				SendUserId: "101",
+				MsgType:    "nologin",
+				Msg:        "token invalid",
+				Data:       nil,
+			})
 			return
 		}
 
