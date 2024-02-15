@@ -43,45 +43,19 @@ func ProcessQueue() {
 					// Re-enqueue the request
 					q.ReEnqueue(qkey, res)
 				} else {
+					clientId := strconv.FormatInt(res.UserId, 10)
+
 					var msg string
 					var msgType string
 					if res.Type == "ud" {
-						msgType = "ud"
-						ipres, err := service.PostProcessImageUd(res.InputImgStr, res.W, res.H, res.Cords, res.Prompt, res.OrderId)
-						if err != nil {
-							ipres = new(image.ImageUdResponse)
-							ipres.StatusCode = errno.SdProcessErrCode
-							ipres.StatusMsg = errno.SdProcessErr.ErrMsg
-							jsonData, _ := json.Marshal(ipres)
-							msg = string(jsonData)
-						} else {
-							ipres.StatusCode = consts.StatusOK
-							ipres.StatusMsg = consts.StatusMessage(consts.StatusOK)
-							jsonData, _ := json.Marshal(ipres)
-							msg = string(jsonData)
-						}
+						msgType, msg = postProcessImageUd(res)
 					} else if res.Type == "tryon" {
-						msgType = "tryon"
-						ipres, err := service.PostProcessImageTryOn(res.InputImgStr, res.W, res.H, res.Cords, res.Prompt, res.OrderId)
-						if err != nil {
-							ipres = new(image.ImageTryOnResponse)
-							ipres.StatusCode = errno.SdProcessErrCode
-							ipres.StatusMsg = errno.SdProcessErr.ErrMsg
-							jsonData, _ := json.Marshal(ipres)
-							msg = string(jsonData)
-						} else {
-							ipres.StatusCode = consts.StatusOK
-							ipres.StatusMsg = consts.StatusMessage(consts.StatusOK)
-							jsonData, _ := json.Marshal(ipres)
-							msg = string(jsonData)
-						}
+						msgType, msg = postProcessImageTryOn(res)
 					}
-
-					clientId := strconv.FormatInt(res.UserId, 10)
+					// hlog.Debugf("post %s process return: %s", msgType, msg)
 
 					// Notify frontend with the processed result
 					servers.SendMessage2Client(clientId, "1001", msgType, errno.WS_SUCCESS, "success", &msg)
-
 					hlog.Debug("Notify frontend with the processed result")
 				}
 
@@ -93,7 +67,46 @@ func ProcessQueue() {
 			}
 		} else {
 			// If queue is empty, wait for a while before checking again
+			hlog.Error(err)
 			time.Sleep(1 * time.Second)
 		}
 	}
+}
+
+func postProcessImageUd(res redis.ImageProcessRequestData) (string, string) {
+	msgType := "ud"
+	var msg = ""
+	ipres, err := service.PostProcessImageUd(res.InputImgStr, res.W, res.H, res.Cords, res.Prompt, res.OrderId)
+	if err != nil {
+		ipres = new(image.ImageUdResponse)
+		ipres.StatusCode = errno.SdProcessErrCode
+		ipres.StatusMsg = errno.SdProcessErr.ErrMsg
+		jsonData, _ := json.Marshal(ipres)
+		msg = string(jsonData)
+	} else {
+		ipres.StatusCode = consts.StatusOK
+		ipres.StatusMsg = consts.StatusMessage(consts.StatusOK)
+		jsonData, _ := json.Marshal(ipres)
+		msg = string(jsonData)
+	}
+	return msgType, msg
+}
+
+func postProcessImageTryOn(res redis.ImageProcessRequestData) (string, string) {
+	msgType := "tryon"
+	var msg = ""
+	ipres, err := service.PostProcessImageTryOn(res.InputImgStr, res.W, res.H, res.Cords, res.Prompt, res.OrderId)
+	if err != nil {
+		ipres = new(image.ImageTryOnResponse)
+		ipres.StatusCode = errno.SdProcessErrCode
+		ipres.StatusMsg = errno.SdProcessErr.ErrMsg
+		jsonData, _ := json.Marshal(ipres)
+		msg = string(jsonData)
+	} else {
+		ipres.StatusCode = consts.StatusOK
+		ipres.StatusMsg = consts.StatusMessage(consts.StatusOK)
+		jsonData, _ := json.Marshal(ipres)
+		msg = string(jsonData)
+	}
+	return msgType, msg
 }
