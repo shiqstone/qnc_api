@@ -28,7 +28,7 @@ var SdBaseUrl string
 
 func Init() {
 	config := viper.Conf.SdService
-	SdBaseUrl = config.BaseUrl //"http://127.0.0.1:7860"
+	SdBaseUrl = config.BaseUrl
 }
 
 // NewImageService create image service
@@ -52,14 +52,25 @@ func detectMask(imgStr string, w, h int, pos [][]int) (string, error) {
 	}
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
+		hlog.Error("process detect mask request err:", err)
 		return "", err
 	}
 
 	hlog.Infof("detect mask request. ")
 
+	// req, err := http.NewRequest("POST", SdBaseUrl+"/sam/sam-predict", bytes.NewBuffer(payloadBytes))
+	// if err != nil {
+	// 	hlog.Error("detect mask request err:", err)
+	// 	return "", err
+	// }
+	// // req.Close = true
+	// // req.Header.Set("Content-Type", "application/json")
+	// client := &http.Client{}
+	// response, err := client.Do(req)
+
 	response, err := http.Post(SdBaseUrl+"/sam/sam-predict", "application/json", bytes.NewBuffer(payloadBytes))
 	if err != nil {
-		// panic(err)
+		hlog.Error("detect mask request err:", err)
 		return "", err
 	}
 	defer response.Body.Close()
@@ -67,7 +78,7 @@ func detectMask(imgStr string, w, h int, pos [][]int) (string, error) {
 	reply := make(map[string]interface{})
 	err = json.NewDecoder(response.Body).Decode(&reply)
 	if err != nil {
-		// panic(err)
+		hlog.Error("detect mask decode response err:", err)
 		return "", err
 	}
 	hlog.Infof("detect mask done: ", reply["msg"])
@@ -99,9 +110,9 @@ func expandMask(imgStr, maskStr string, dilateAmount int) (string, error) {
 	}
 
 	hlog.Infof("expand mask request. ")
-	// sdURL := "http://127.0.0.1:7860"
 	response, err := http.Post(SdBaseUrl+"/sam/dilate-mask", "application/json", bytes.NewBuffer(payloadBytes))
 	if err != nil {
+		hlog.Error("expand mask request err:", err)
 		return "", err
 	}
 	defer response.Body.Close()
@@ -109,6 +120,7 @@ func expandMask(imgStr, maskStr string, dilateAmount int) (string, error) {
 	reply := make(map[string]interface{})
 	err = json.NewDecoder(response.Body).Decode(&reply)
 	if err != nil {
+		hlog.Error("expand mask decode response err:", err)
 		return "", err
 	}
 
@@ -167,6 +179,7 @@ func inpainting(imgStr, maskStr, prompt string) (string, int64, error) {
 	reply := make(map[string]interface{})
 	err = json.NewDecoder(response.Body).Decode(&reply)
 	if err != nil {
+		hlog.Error("request img2img err:", err)
 		return "", 0, err
 	}
 	hlog.Infof("inpaint img2img done. ")
@@ -176,6 +189,7 @@ func inpainting(imgStr, maskStr, prompt string) (string, int64, error) {
 	info := make(map[string]interface{})
 	err = json.Unmarshal([]byte(infoStr), &info)
 	if err == nil {
+		hlog.Error("img2img decode response err:", err)
 		seed = int64(info["seed"].(float64))
 	}
 
@@ -218,7 +232,7 @@ func processImage(inputImgStr string, w, h int, cords []mimg.Coordinate, prompt 
 	}
 	processedImg, seed, err = inpainting(inputImgStr, maskStr, prompt)
 	if err != nil {
-		return "", "", 0, nil
+		return "", "", 0, err
 	}
 	if processedImg == "" {
 		msg = "Process image failded, try again later"
@@ -232,7 +246,15 @@ func processImage(inputImgStr string, w, h int, cords []mimg.Coordinate, prompt 
 func GetProgress() (float64, error) {
 	hlog.Infof("api progress request. ")
 
-	response, err := http.Get(SdBaseUrl + "/sdapi/v1/progress")
+	req, err := http.NewRequest("GET", SdBaseUrl+"/sdapi/v1/progress", nil)
+	if err != nil {
+		hlog.Error("api progress request err:", err)
+		return 0, err
+	}
+	req.Close = true
+	client := &http.Client{}
+	response, err := client.Do(req)
+	// response, err := http.Get(SdBaseUrl + "/sdapi/v1/progress")
 	hlog.Debug((response))
 	if err != nil {
 		return 0, err
