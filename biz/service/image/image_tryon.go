@@ -79,6 +79,7 @@ func (s *ImageService) ProcessImageTryOn(req *mimg.ImageTryOnRequest) (resp *mim
 		Type:        "tryon",
 	})
 	if err != nil {
+		hlog.Error(err)
 		return nil, err
 	}
 
@@ -109,7 +110,7 @@ func PostProcessImageTryOn(base64Content string, width, height int, coordinates 
 	msg, processedImg, seed, err := processImage(base64Content, width, height, coordinates, prompt)
 	if err != nil {
 		hlog.Error("process image err:", err)
-		return nil, errors.New("process image failed")
+		return nil, err //errors.New("process image failed")
 	}
 
 	ts := time.Now().Unix()

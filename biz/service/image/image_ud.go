@@ -81,6 +81,7 @@ func (s *ImageService) ProcessImageUd(req *mimg.ImageUdRequest) (resp *mimg.Imag
 		Type:        "ud",
 	})
 	if err != nil {
+		hlog.Error(err)
 		return nil, err
 	}
 
@@ -111,7 +112,7 @@ func PostProcessImageUd(base64Content string, width, height int, coordinates []m
 	msg, processedImg, seed, err := processImage(base64Content, width, height, coordinates, prompt)
 	if err != nil {
 		hlog.Error("process image err:", err)
-		return nil, errors.New("process image failed")
+		return nil, err //errors.New("process image failed")
 	}
 
 	// hlog.Debug((res))

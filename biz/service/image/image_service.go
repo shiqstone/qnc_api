@@ -90,7 +90,7 @@ func detectMask(imgStr string, w, h int, pos [][]int) (string, error) {
 		}
 	}
 
-	return "", errors.New("detect mask failed")
+	return "", errors.New("no detected available object, click on the image to add annotations")
 }
 
 func expandMask(imgStr, maskStr string, dilateAmount int) (string, error) {
@@ -129,7 +129,7 @@ func expandMask(imgStr, maskStr string, dilateAmount int) (string, error) {
 		return mask.(string), nil
 	}
 
-	return "", errors.New("expand mask failed")
+	return "", errors.New("no available mask, click on the image to add annotations")
 }
 
 func inpainting(imgStr, maskStr, prompt string) (string, int64, error) {
@@ -199,7 +199,7 @@ func inpainting(imgStr, maskStr, prompt string) (string, int64, error) {
 			return imgs[0], seed, nil
 		}
 	}
-	return "", seed, errors.New("impaint img2img failed")
+	return "", seed, errors.New("process image failded, try again later")
 }
 
 func processImage(inputImgStr string, w, h int, cords []mimg.Coordinate, prompt string) (msg string, processedImg string, seed int64, err error) {

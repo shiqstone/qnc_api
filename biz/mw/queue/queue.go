@@ -80,7 +80,7 @@ func postProcessImageUd(res redis.ImageProcessRequestData) (string, string) {
 	if err != nil {
 		ipres = new(image.ImageUdResponse)
 		ipres.StatusCode = errno.SdProcessErrCode
-		ipres.StatusMsg = errno.SdProcessErr.ErrMsg
+		ipres.StatusMsg = err.Error() //errno.SdProcessErr.ErrMsg
 		jsonData, _ := json.Marshal(ipres)
 		msg = string(jsonData)
 	} else {
@@ -99,7 +99,7 @@ func postProcessImageTryOn(res redis.ImageProcessRequestData) (string, string) {
 	if err != nil {
 		ipres = new(image.ImageTryOnResponse)
 		ipres.StatusCode = errno.SdProcessErrCode
-		ipres.StatusMsg = errno.SdProcessErr.ErrMsg
+		ipres.StatusMsg = err.Error() //errno.SdProcessErr.ErrMsg
 		jsonData, _ := json.Marshal(ipres)
 		msg = string(jsonData)
 	} else {
