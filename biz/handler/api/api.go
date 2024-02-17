@@ -56,3 +56,19 @@ func GetTopupConf(ctx context.Context, c *app.RequestContext) {
 
 	c.JSON(consts.StatusOK, resp)
 }
+
+// @router /api/clothes [GET]
+func GetClothes(ctx context.Context, c *app.RequestContext) {
+	var err error
+	resp, err := kvservice.NewKvService(ctx, c).GetClothes()
+	if err != nil {
+		resp := utils.BuildBaseResp(err)
+		c.JSON(consts.StatusOK, pay.PayStatusResponse{
+			StatusCode: resp.StatusCode,
+			StatusMsg:  resp.StatusMsg,
+		})
+		return
+	}
+
+	c.JSON(consts.StatusOK, resp)
+}

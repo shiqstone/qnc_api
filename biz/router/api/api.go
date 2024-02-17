@@ -15,3 +15,8 @@ func GetDepositConf(r *server.Hertz) {
 
 	r.GET("/api/gettopupconf", api.GetTopupConf)
 }
+
+func GetClothes(r *server.Hertz) {
+
+	r.GET("/api/getclothes", api.GetClothes)
+}

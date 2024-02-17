@@ -60,3 +60,19 @@ func (s *KvService) GetDepositConf() (resp *kv.DepositConfResponse, err error) {
 
 	return resp, nil
 }
+
+func (s *KvService) GetClothes() (resp *kv.ClothesResponse, err error) {
+	kvs, err := db.QueryByName("cloth")
+	if err != nil {
+		return nil, err
+	}
+	resp = new(kv.ClothesResponse)
+
+	var clothes []string
+	for _, v := range kvs {
+		clothes = append(clothes, v.Value)
+	}
+	resp.Clothes = clothes
+
+	return resp, nil
+}

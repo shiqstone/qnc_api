@@ -29,4 +29,6 @@ func ApiPayNotify(r *server.Hertz) {
 
 func GetConf(r *server.Hertz) {
 	api.GetDepositConf(r)
+
+	api.GetClothes(r)
 }
