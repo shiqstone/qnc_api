@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"sync"
 	"time"
 
 	"github.com/hertz-contrib/websocket"
@@ -15,6 +16,7 @@ type Client struct {
 	UserId      string          // 业务端标识用户ID
 	Extend      string          // 扩展字段，用户可以自定义
 	GroupList   []string
+	Lock        sync.Mutex
 }
 
 type SendData struct {

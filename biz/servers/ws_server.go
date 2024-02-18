@@ -1,6 +1,7 @@
 package servers
 
 import (
+	"errors"
 	"qnc/biz/servers/utils"
 	"qnc/pkg/constants"
 	"time"
@@ -188,6 +189,11 @@ func CloseLocalClient(clientId, systemId string) {
 
 // 监听并发送给客户端信息
 func WriteMessage() {
+	defer func() {
+		if err := recover(); err != nil {
+			hlog.Error(err)
+		}
+	}()
 	for {
 		clientInfo := <-ToClientChan
 		hlog.Debug(map[string]interface{}{
@@ -203,7 +209,7 @@ func WriteMessage() {
 		})
 		hlog.Info("send to local")
 		if conn, err := Manager.GetByClientId(clientInfo.ClientId); err == nil && conn != nil {
-			if err := Render(conn.Socket, clientInfo.MessageId, clientInfo.SendUserId, clientInfo.Code, clientInfo.MsgType, clientInfo.Msg, clientInfo.Data); err != nil {
+			if err := Render(conn, clientInfo.MessageId, clientInfo.SendUserId, clientInfo.Code, clientInfo.MsgType, clientInfo.Msg, clientInfo.Data); err != nil {
 				Manager.DisConnect <- conn
 				hlog.Errorf("client offline error: ", map[string]interface{}{
 					"host":       constants.GlobalSetting.LocalHost,
@@ -221,8 +227,15 @@ func WriteMessage() {
 	}
 }
 
-func Render(conn *websocket.Conn, messageId string, sendUserId string, code int, msgType string, message string, data interface{}) error {
-	return conn.WriteJSON(RetData{
+func Render(client *Client, messageId string, sendUserId string, code int, msgType string, message string, data interface{}) error {
+	client.Lock.Lock()
+	defer client.Lock.Unlock()
+
+	if client.Socket == nil {
+		return errors.New("connect not existed")
+	}
+
+	return client.Socket.WriteJSON(RetData{
 		Code:       code,
 		MessageId:  messageId,
 		SendUserId: sendUserId,
@@ -234,22 +247,32 @@ func Render(conn *websocket.Conn, messageId string, sendUserId string, code int,
 
 // 启动定时器进行心跳检测
 func PingTimer() {
-	go func() {
-		ticker := time.NewTicker(heartbeatInterval)
-		defer ticker.Stop()
-		for {
-			<-ticker.C
-			//发送心跳
-			for clientId, conn := range Manager.AllClient() {
-				if conn == nil || conn.Socket == nil {
-					continue
-				}
-				if err := conn.Socket.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(time.Second)); err != nil {
-					Manager.DisConnect <- conn
-					hlog.Errorf("send heart beat failed: %s total connect：%d", clientId, Manager.Count())
-				}
-			}
+	ticker := time.NewTicker(heartbeatInterval)
+	// defer ticker.Stop()
+	defer func() {
+		ticker.Stop()
+		if err := recover(); err != nil {
+			hlog.Error(err)
 		}
-
 	}()
+	for {
+		<-ticker.C
+		//send heart beat
+		for clientId, conn := range Manager.AllClient() {
+			if conn == nil || conn.Socket == nil {
+				continue
+			}
+			clientHeartBeat(conn, clientId)
+		}
+	}
+}
+
+func clientHeartBeat(conn *Client, clientId string) {
+	conn.Lock.Lock()
+	defer conn.Lock.Unlock()
+
+	if err := conn.Socket.WriteControl(websocket.PingMessage, []byte{}, time.Now().Add(time.Second)); err != nil {
+		Manager.DisConnect <- conn
+		hlog.Errorf("send heart beat failed: %s total connect：%d", clientId, Manager.Count())
+	}
 }

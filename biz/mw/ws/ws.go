@@ -7,5 +7,5 @@ func Init() {
 
 	// go servers.WriteMessage()
 
-	servers.PingTimer()
+	go servers.PingTimer()
 }
