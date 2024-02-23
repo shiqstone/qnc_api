@@ -8,6 +8,7 @@ require (
 	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/google/uuid v1.6.0
 	github.com/hertz-contrib/jwt v1.0.2
+	github.com/hertz-contrib/logger/accesslog v0.0.0-20240128134225-6b18af47a115
 	github.com/hertz-contrib/websocket v0.1.0
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.18.0

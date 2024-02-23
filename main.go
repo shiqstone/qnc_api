@@ -14,6 +14,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/network/standard"
 	"github.com/hertz-contrib/cors"
+	"github.com/hertz-contrib/logger/accesslog"
 )
 
 func Init() {
@@ -48,6 +49,7 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour, // Maximum length of upload_file-side cache preflash requests (seconds)
 	}))
+	h.Use(accesslog.New(accesslog.WithFormat("${ip} [${time}] ${status} - ${latency} ${method} ${path} ${queryParams} ${ua}")))
 
 	register(h)
 	h.Spin()
