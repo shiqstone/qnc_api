@@ -29,7 +29,7 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		})
 		return
 	}
-	hlog.Debugf("user register param:", &req)
+	hlog.Debug("user register param:", &req)
 
 	_, err = service.NewUserService(ctx, c).UserRegister(&req)
 	if err != nil {

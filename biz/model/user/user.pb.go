@@ -22,55 +22,9 @@ type RegisterRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username" form:"username,required" query:"username"`                     // 注册用户名，最长32个字符
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password" form:"password" query:"password" vd:"(len($)>=6&&len($)<=32)"` // 密码，最长32个字符
+	Username string `json:"username" form:"username,required" query:"username"`                     // 注册用户名，最长32个字符
+	Password string `json:"password" form:"password" query:"password" vd:"(len($)>=6&&len($)<=32)"` // 密码，最长32个字符
 	Email    string `json:"email" form:"email" vd:"email($)"`
-}
-
-func (x *RegisterRequest) Reset() {
-	*x = RegisterRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_user_proto_msgTypes[0]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *RegisterRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterRequest) ProtoMessage() {}
-
-func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[0]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
-func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *RegisterRequest) GetUsername() string {
-	if x != nil {
-		return x.Username
-	}
-	return ""
-}
-
-func (x *RegisterRequest) GetPassword() string {
-	if x != nil {
-		return x.Password
-	}
-	return ""
 }
 
 type RegisterResponse struct {
@@ -84,74 +38,14 @@ type RegisterResponse struct {
 	Token      string `protobuf:"bytes,4,opt,name=token,proto3" json:"token,omitempty" form:"token" query:"token"`                                    // 用户鉴权token
 }
 
-func (x *RegisterResponse) Reset() {
-	*x = RegisterResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_user_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *RegisterResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*RegisterResponse) ProtoMessage() {}
-
-func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_user_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
-func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_user_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *RegisterResponse) GetStatusCode() int32 {
-	if x != nil {
-		return x.StatusCode
-	}
-	return 0
-}
-
-func (x *RegisterResponse) GetStatusMsg() string {
-	if x != nil {
-		return x.StatusMsg
-	}
-	return ""
-}
-
-func (x *RegisterResponse) GetUserId() int64 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *RegisterResponse) GetToken() string {
-	if x != nil {
-		return x.Token
-	}
-	return ""
-}
-
 type LoginRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty" form:"username" query:"username"` // 登录用户名
-	Email    string `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty" form:"email" query:"email"`             // 用户邮箱
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty" form:"password" query:"password"` // 登录密码
+	Username string `json:"username,omitempty" form:"username" query:"username"` // 登录用户名
+	Email    string `json:"email,omitempty" form:"email" query:"email"`          // 用户邮箱
+	Password string `json:"password,omitempty" form:"password" query:"password"` // 登录密码
 }
 
 func (x *LoginRequest) Reset() {

@@ -179,17 +179,16 @@ func inpainting(imgStr, maskStr, prompt string) (string, int64, error) {
 	reply := make(map[string]interface{})
 	err = json.NewDecoder(response.Body).Decode(&reply)
 	if err != nil {
-		hlog.Error("request img2img err:", err)
+		hlog.Error("img2img decode response err:", err)
 		return "", 0, err
 	}
-	hlog.Infof("inpaint img2img done. ")
+	hlog.Info("inpaint img2img done. ")
 
 	var seed int64
 	infoStr := reply["info"].(string)
 	info := make(map[string]interface{})
 	err = json.Unmarshal([]byte(infoStr), &info)
 	if err == nil {
-		hlog.Error("img2img decode response err:", err)
 		seed = int64(info["seed"].(float64))
 	}
 
