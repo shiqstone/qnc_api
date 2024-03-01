@@ -4,6 +4,7 @@ package main
 
 import (
 	"qnc/biz/dal"
+	mylog "qnc/biz/log"
 	"qnc/biz/mw/jwt"
 	"qnc/biz/mw/queue"
 	"qnc/biz/mw/viper"
@@ -24,6 +25,7 @@ func Init() {
 	queue.Init()
 	ws.Init()
 	img_service.Init()
+	mylog.Init()
 }
 
 func main() {

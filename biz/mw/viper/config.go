@@ -5,6 +5,7 @@ type Config struct {
 	DB        *DB        `yaml:"DB"`
 	Redis     *Redis     `yaml:"Redis"`
 	SdService *SdService `yaml:"SdService"`
+	Log       *Log       `yaml:"Log"`
 }
 
 type App struct {
@@ -32,4 +33,9 @@ type Redis struct {
 
 type SdService struct {
 	BaseUrl string `yaml:"BaseUrl"` // Stable diffusion Service base url
+}
+
+type Log struct {
+	LogPath  string `yaml:"LogPath"`
+	LogLevel int    `yaml:"LogLevel"`
 }
