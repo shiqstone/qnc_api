@@ -5,6 +5,10 @@ App:
   AllowOrigins : "https://example.com"
   MaxRequestBodySize: 10485760  # 10M
 
+Log:
+  LogPath: "./logs"
+  LogLevel: 1 # 1:Debug 2:Info
+
 DB:
   MysqlDSN: root:root@tcp(127.0.0.1:3306)/qnc_db?charset=utf8&parseTime=True&loc=Local
 
@@ -17,3 +21,7 @@ Redis:
 
 SdService:
   BaseUrl: "http://127.0.0.1:7860"
+
+Aws:
+  AccessKey: "your_access_key_id"
+	SecretKey: "your_secret_access_key"
