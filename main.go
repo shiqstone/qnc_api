@@ -9,6 +9,7 @@ import (
 	"qnc/biz/mw/queue"
 	"qnc/biz/mw/viper"
 	"qnc/biz/mw/ws"
+	aws_handler "qnc/biz/service/aws"
 	img_service "qnc/biz/service/image"
 	"time"
 
@@ -26,6 +27,7 @@ func Init() {
 	ws.Init()
 	img_service.Init()
 	mylog.Init()
+	aws_handler.Init()
 }
 
 func main() {

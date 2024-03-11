@@ -6,6 +6,7 @@ type Config struct {
 	Redis     *Redis     `yaml:"Redis"`
 	SdService *SdService `yaml:"SdService"`
 	Log       *Log       `yaml:"Log"`
+	Aws       *Aws       `yaml:"Aws"`
 }
 
 type App struct {
@@ -38,4 +39,9 @@ type SdService struct {
 type Log struct {
 	LogPath  string `yaml:"LogPath"`
 	LogLevel int    `yaml:"LogLevel"`
+}
+
+type Aws struct {
+	AccessKey string `yaml:"AccessKey"`
+	SecretKey string `yaml:"SecretKey"`
 }
