@@ -42,6 +42,9 @@ type Log struct {
 }
 
 type Aws struct {
-	AccessKey string `yaml:"AccessKey"`
-	SecretKey string `yaml:"SecretKey"`
+	AccessKey     string `yaml:"AccessKey"`
+	SecretKey     string `yaml:"SecretKey"`
+	Region        string `yaml:"Region"`
+	IdleTime      int64  `yaml:"IdleTime"`
+	AutoStartStop bool   `yaml:"AutoStartTop"`
 }

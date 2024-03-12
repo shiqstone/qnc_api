@@ -25,3 +25,6 @@ SdService:
 Aws:
   AccessKey: "your_access_key_id"
 	SecretKey: "your_secret_access_key"
+  Region: "your_instance_resion"
+  IdleTime: 2 # Minutes
+  AutoStartStop: true

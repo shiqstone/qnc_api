@@ -33,7 +33,7 @@ func Init() {
 	accessKey = config.AccessKey
 	secretKey = config.SecretKey
 
-	region = "ap-southeast-1"
+	region = config.Region
 	instanceId = "i-0dbf23e4a46fa2119"
 }
 
@@ -66,8 +66,8 @@ func (s *EC2Handler) GetInstanceStatus() (status string, err error) {
 	return
 }
 
-func (s *EC2Handler) StartInstance() (err error) {
-	cfg, err := config.LoadDefaultConfig(s.ctx,
+func StartInstance() (err error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(region),
 		config.WithCredentialsProvider(aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, ""))),
 	)
@@ -79,7 +79,7 @@ func (s *EC2Handler) StartInstance() (err error) {
 	input := &ec2.DescribeInstanceStatusInput{
 		InstanceIds: []string{instanceId},
 	}
-	output, err := ec2Client.DescribeInstanceStatus(s.ctx, input)
+	output, err := ec2Client.DescribeInstanceStatus(context.TODO(), input)
 	if err != nil {
 		hlog.Error(err)
 		return
@@ -96,7 +96,7 @@ func (s *EC2Handler) StartInstance() (err error) {
 			InstanceIds: []string{instanceId},
 		}
 		hlog.Infof("Start %s\n", instanceId)
-		if outputStart, errInstance := ec2Client.StartInstances(s.ctx, runInstance); errInstance != nil {
+		if outputStart, errInstance := ec2Client.StartInstances(context.TODO(), runInstance); errInstance != nil {
 			return
 		} else {
 			hlog.Info(outputStart.StartingInstances)
@@ -107,8 +107,8 @@ func (s *EC2Handler) StartInstance() (err error) {
 	return
 }
 
-func (s *EC2Handler) StopInstance() (err error) {
-	cfg, err := config.LoadDefaultConfig(s.ctx,
+func StopInstance() (err error) {
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(region),
 		config.WithCredentialsProvider(aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, ""))),
 	)
@@ -120,7 +120,7 @@ func (s *EC2Handler) StopInstance() (err error) {
 	input := &ec2.DescribeInstanceStatusInput{
 		InstanceIds: []string{instanceId},
 	}
-	output, err := ec2Client.DescribeInstanceStatus(s.ctx, input)
+	output, err := ec2Client.DescribeInstanceStatus(context.TODO(), input)
 	if err != nil {
 		hlog.Error(err)
 		return
@@ -137,7 +137,7 @@ func (s *EC2Handler) StopInstance() (err error) {
 			InstanceIds: []string{instanceId},
 		}
 		hlog.Infof("Stop %s\n", instanceId)
-		if outputStop, errInstance := ec2Client.StopInstances(s.ctx, stopInstance); errInstance != nil {
+		if outputStop, errInstance := ec2Client.StopInstances(context.TODO(), stopInstance); errInstance != nil {
 			return
 		} else {
 			hlog.Info(outputStop.StoppingInstances)
