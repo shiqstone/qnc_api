@@ -5,6 +5,7 @@ package main
 import (
 	"qnc/biz/dal"
 	mylog "qnc/biz/log"
+	frual "qnc/biz/mw/frugal"
 	"qnc/biz/mw/jwt"
 	"qnc/biz/mw/queue"
 	"qnc/biz/mw/viper"
@@ -28,6 +29,7 @@ func Init() {
 	img_service.Init()
 	mylog.Init()
 	aws_handler.Init()
+	frual.Init()
 }
 
 func main() {

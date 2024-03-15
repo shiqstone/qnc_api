@@ -3,8 +3,11 @@ package queue
 import (
 	"encoding/json"
 	"qnc/biz/model/image"
+	frual "qnc/biz/mw/frugal"
 	"qnc/biz/mw/redis"
+	"qnc/biz/mw/viper"
 	"qnc/biz/servers"
+	ec2 "qnc/biz/service/aws"
 	service "qnc/biz/service/image"
 	"qnc/pkg/errno"
 	"strconv"
@@ -15,8 +18,10 @@ import (
 )
 
 var sdService = make(chan struct{}, 1) // Semaphore for controlling access to SD service
+var autoStartStop bool
 
 func Init() {
+	autoStartStop = viper.Conf.Aws.AutoStartStop
 	go ProcessQueue()
 }
 
@@ -29,10 +34,14 @@ func ProcessQueue() {
 		// Check if queue is not empty
 		res, err := q.Dequeue(qkey)
 		if err == nil {
-			// Check if SD service is available
-
 			select {
 			case <-sdService:
+				//try start ec2 instance
+				if autoStartStop {
+					ec2.StartInstance()
+				}
+
+				// Check if SD service is available
 				progress, err := service.GetProgress()
 				if err != nil {
 					hlog.Errorf("get SD service err:", err)
@@ -57,6 +66,11 @@ func ProcessQueue() {
 					// Notify frontend with the processed result
 					servers.SendMessage2Client(clientId, "1001", msgType, errno.WS_SUCCESS, "success", &msg)
 					hlog.Debug("Notify frontend with the processed result")
+
+					// Notify to stop ec2 instance
+					if autoStartStop {
+						frual.Notify()
+					}
 				}
 
 				sdService <- struct{}{} // Release SD service
