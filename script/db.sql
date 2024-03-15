@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS qnc_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+use qnc_db;
+
 CREATE TABLE `qnc_user` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_name` varchar(128) NOT NULL DEFAULT '' COMMENT '用户名',
@@ -105,3 +108,18 @@ CREATE TABLE `qnc_order` (
   PRIMARY KEY (`id`),
   KEY `inx_uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单记录';
+
+CREATE TABLE `qnc_payment_config` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `country_code` char(8) NOT NULL COMMENT '国家地区代码',
+  `coins` decimal(10,2) NOT NULL DEFAULT '0' COMMENT '硬币',
+  `currency` varchar(16) DEFAULT '' COMMENT '币种',
+  `sign` varchar(4) DEFAULT '' COMMENT '币种符号',
+  `price` decimal(20,2) NOT NULL DEFAULT '0.00' COMMENT '标价',
+  `actual_price` decimal(20,2) NOT NULL DEFAULT '0.00' COMMENT '售价',
+  `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+  `create_time` bigint(20) NOT NULL COMMENT '创建时间',
+  `update_time` bigint(20) NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`),
+  KEY `idx_cc` (`country_code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='充值产品配置';
