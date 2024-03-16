@@ -34,3 +34,25 @@ INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_25', 'sweatshirt
 INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_26', 'hoodie', 1);
 INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_27', 'Sailor Uniform', 1);
 INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_28', 'Soccer Jersey', 1);
+
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 10.00, 'USD', '$', 1.00, 0.99, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 30.00, 'USD', '$', 3.00, 2.97, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 50.00, 'USD', '$', 5.00, 4.95, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 1000.00, 'USD', '$', 10.00,9.88, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 10.00, 'IDR', 'Rp', 15600, 15555, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 30.00, 'IDR', 'Rp', 46860, 46666, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 50.00, 'IDR', 'Rp', 78100, 77777, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 1000.00, 'IDR', 'Rp', 157000,155555, NULL, 1708785940, 1708785968);
+
+
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('USD', 0.13897755, 0.13897755, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('IDR', 2174.75693428, 2174.75693428, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('SGD', 0.18593748, 0.18593748, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('THB', 4.97878414, 4.97878414, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('PHP', 7.72942837, 7.72942837, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('VND', 3434.91671119, 3434.91671119, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('MYR', 0.65381949, 0.65381949, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('LAK', 2902.03702569, 2902.03702569, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('KHR', 563.02549074, 563.02549074, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('MMK', 291.82963928, 291.82963928, '2024-03-16', '', 1710610214, 1710610328);
+INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('INR', 11.52048758, 11.52048758, '2024-03-16', '', 1710610214, 1710610328);

@@ -109,7 +109,7 @@ CREATE TABLE `qnc_order` (
   KEY `inx_uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='订单记录';
 
-CREATE TABLE `qnc_payment_config` (
+CREATE TABLE `qnc_deposit_config` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `country_code` char(8) NOT NULL COMMENT '国家地区代码',
   `coins` decimal(10,2) NOT NULL DEFAULT '0' COMMENT '硬币',
@@ -123,3 +123,15 @@ CREATE TABLE `qnc_payment_config` (
   PRIMARY KEY (`id`),
   KEY `idx_cc` (`country_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='充值产品配置';
+
+CREATE TABLE `qnc_currency_record` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `currency` varchar(16) DEFAULT '' COMMENT '币种',
+  `base_xt` decimal(20,8) NOT NULL DEFAULT '0.00' COMMENT '基准汇率',
+  `latest_xt` decimal(20,8) NOT NULL DEFAULT '0.00' COMMENT '最新汇率',
+  `update_date` char(10) DEFAULT '' COMMENT '更新日期 YYYY-MM-DD',
+  `remark` varchar(512) DEFAULT NULL COMMENT '备注',
+  `create_time` bigint(20) NOT NULL COMMENT '创建时间',
+  `update_time` bigint(20) NOT NULL COMMENT '更新时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='汇率变动记录';
