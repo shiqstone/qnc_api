@@ -5,6 +5,7 @@ package main
 import (
 	"qnc/biz/dal"
 	mylog "qnc/biz/log"
+	"qnc/biz/mw/cronjob"
 	frual "qnc/biz/mw/frugal"
 	"qnc/biz/mw/jwt"
 	"qnc/biz/mw/queue"
@@ -30,6 +31,7 @@ func Init() {
 	mylog.Init()
 	aws_handler.Init()
 	frual.Init()
+	go cronjob.Init()
 }
 
 func main() {
