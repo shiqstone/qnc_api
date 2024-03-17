@@ -35,14 +35,17 @@ INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_26', 'hoodie', 1
 INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_27', 'Sailor Uniform', 1);
 INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('cloth_28', 'Soccer Jersey', 1);
 
+INSERT INTO `qnc_kv` (`name`, `value`, `status`) VALUES ('regions', '[\"ID\", \"US\"]', 1);
+
+
 INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 10.00, 'USD', '$', 1.00, 0.99, NULL, 1708785940, 1708785968);
 INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 30.00, 'USD', '$', 3.00, 2.97, NULL, 1708785940, 1708785968);
 INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 50.00, 'USD', '$', 5.00, 4.95, NULL, 1708785940, 1708785968);
-INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 1000.00, 'USD', '$', 10.00,9.88, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('US', 100.00, 'USD', '$', 10.00,9.88, NULL, 1708785940, 1708785968);
 INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 10.00, 'IDR', 'Rp', 15600, 15555, NULL, 1708785940, 1708785968);
 INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 30.00, 'IDR', 'Rp', 46860, 46666, NULL, 1708785940, 1708785968);
 INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 50.00, 'IDR', 'Rp', 78100, 77777, NULL, 1708785940, 1708785968);
-INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 1000.00, 'IDR', 'Rp', 157000,155555, NULL, 1708785940, 1708785968);
+INSERT INTO `qnc_deposit_config` (`country_code`, `coins`, `currency`, `sign`, `price`, `actual_price`, `remark`, `create_time`, `update_time`) VALUES ('ID', 100.00, 'IDR', 'Rp', 157000,155555, NULL, 1708785940, 1708785968);
 
 
 INSERT INTO `qnc_currency_record` (`currency`, `base_xt`, `latest_xt`, `update_date`, `remark`, `create_time`, `update_time`) VALUES ('USD', 0.13897755, 0.13897755, '2024-03-16', '', 1710610214, 1710610328);
