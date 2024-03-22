@@ -29,6 +29,13 @@ func ApiPayNotify(r *server.Hertz) {
 
 func GetConf(r *server.Hertz) {
 	api.GetDepositConf(r)
+	api.GetDepositProds(r)
 
 	api.GetClothes(r)
+}
+
+func AwsControl(r *server.Hertz) {
+	// api.GetEc2Status(r)
+	// api.StartEc2Instance(r)
+	// api.StopEc2Instance(r)
 }

@@ -5,7 +5,7 @@ import (
 )
 
 type DepositConfRequest struct {
-	CountryCode string `json:"contry_code,omitempty"`
+	CountryCode string `json:"country_code,omitempty"`
 }
 
 type DepositConfResponse struct {
