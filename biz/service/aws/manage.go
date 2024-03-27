@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"qnc/biz/mw/viper"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -26,15 +25,6 @@ type EC2Handler struct {
 
 func NewEc2Service(ctx context.Context, c *app.RequestContext) *EC2Handler {
 	return &EC2Handler{ctx: ctx, c: c}
-}
-
-func Init() {
-	config := viper.Conf.Aws
-	accessKey = config.AccessKey
-	secretKey = config.SecretKey
-
-	region = config.Region
-	instanceId = "i-0dbf23e4a46fa2119"
 }
 
 func (s *EC2Handler) GetInstanceStatus() (status string, err error) {

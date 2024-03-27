@@ -47,4 +47,5 @@ type Aws struct {
 	Region        string `yaml:"Region"`
 	IdleTime      int64  `yaml:"IdleTime"`
 	AutoStartStop bool   `yaml:"AutoStartTop"`
+	SesSender     string `yaml:"SesSender"`
 }
